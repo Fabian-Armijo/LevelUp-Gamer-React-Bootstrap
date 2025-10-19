@@ -1,0 +1,85 @@
+.navigation {
+  position: relative;
+}
+
+.hamburger-button {
+  display: none; /* Oculto en pantallas grandes */
+  font-size: 2rem;
+  color: var(--color-primary-accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Espacio entre enlaces en desktop */
+}
+
+.nav-links a, .profile-select {
+  font-family: var(--font-header);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover {
+  color: var(--color-secondary-accent);
+  border-bottom-color: var(--color-secondary-accent);
+}
+
+/* Estilo para el select */
+.profile-select {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+
+.profile-select:focus {
+  outline: none;
+}
+
+.profile-select option {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  border: none;
+}
+
+/* --- ESTILOS RESPONSIVOS --- */
+@media (max-width: 992px) {
+  .hamburger-button {
+    display: block; /* Muestra el botón en móviles */
+  }
+
+  .nav-links {
+    display: none; /* Oculta el menú por defecto */
+    flex-direction: column;
+    position: absolute;
+    top: 50px; /* Debajo del botón */
+    right: 0;
+    background-color: #1a1a1a;
+    width: 250px;
+    padding: 20px;
+    border: 1px solid var(--color-primary-accent);
+    border-radius: 5px;
+    z-index: 1000;
+  }
+
+  .nav-links.show {
+    display: flex; /* Muestra el menú cuando está abierto */
+  }
+  
+  .nav-links a, .profile-select {
+    width: 100%;
+    text-align: left;
+    padding: 10px 0;
+  }
+}

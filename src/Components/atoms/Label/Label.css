@@ -1,0 +1,6 @@
+.custom-label {
+  font-family: var(--font-header);
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+  display: block;
+}

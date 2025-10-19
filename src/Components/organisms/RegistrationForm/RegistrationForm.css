@@ -1,0 +1,48 @@
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  border: 2px solid var(--color-primary-accent);
+  border-radius: 10px;
+  background-color: #1a1a1a; /* Un gris muy oscuro para destacar */
+}
+
+.form-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.form-message {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--color-secondary-accent);
+  font-family: var(--font-main);
+  font-weight: 500;
+}
+
+.terms-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px; 
+}
+
+.terms-label {
+  font-family: var(--font-main);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.terms-label a {
+  color: var(--color-primary-accent);
+  text-decoration: underline;
+}
+
+.terms-label a:hover {
+  color: var(--color-secondary-accent);
+}
+
+/* Estilo específico para el mensaje de error del checkbox */
+.error-message.terms-error {
+  margin-top: 0;
+  margin-bottom: 20px; /* Margen para separar del botón */
+}

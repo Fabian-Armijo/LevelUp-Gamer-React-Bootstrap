@@ -1,0 +1,29 @@
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border: 2px solid var(--color-primary-accent);
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
+  vertical-align: middle; 
+}
+
+.custom-checkbox:checked {
+  background-color: var(--color-secondary-accent);
+  border-color: var(--color-secondary-accent);
+}
+
+.custom-checkbox:checked::after {
+  content: '✔';
+  font-size: 14px;
+  color: var(--color-background);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

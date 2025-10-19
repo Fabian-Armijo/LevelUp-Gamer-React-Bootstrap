@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;500;700&display=swap');
+
+
+:root {
+  /* --- COLORES --- */
+  --color-background: #000000;
+  --color-primary-accent: #1E90FF;  /* Azul Eléctrico */
+  --color-secondary-accent: #39FF14; /* Verde Neón */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #D3D3D3;
+
+  /* --- TIPOGRAFÍA --- */
+  --font-main: 'Roboto', sans-serif;
+  --font-header: 'Orbitron', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-main);
+  margin: 0;
+  padding: 0;
+}
+
+/* Aplicar la fuente de encabezado a todos los títulos */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-header);
+  color: var(--color-primary-accent); /* Usemos el azul para los títulos, por ejemplo */
+}
+
+/* Un estilo para el texto secundario */
+p, span {
+    color: var(--color-text-secondary);
+}
