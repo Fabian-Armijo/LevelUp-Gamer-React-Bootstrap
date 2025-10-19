@@ -1,0 +1,62 @@
+.about-us-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 40px 0;
+  border-top: 1px solid #2a2a2a;
+}
+
+.about-us-content {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.about-us-text {
+  flex: 1; /* Ocupa el espacio disponible */
+}
+
+.about-us-text .section-title {
+  text-align: left; /* Alineamos el título a la izquierda */
+  margin-bottom: 20px;
+}
+
+.about-us-paragraph {
+  font-family: var(--font-main);
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.about-us-paragraph strong {
+  color: var(--color-primary-accent);
+}
+
+.about-us-image-container {
+  flex: 1;
+  max-width: 450px;
+}
+
+.about-us-image {
+  width: 100%;
+  border-radius: 10px;
+  border: 2px solid var(--color-primary-accent);
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 992px) {
+  .about-us-content {
+    flex-direction: column; /* Apila el texto y la imagen en móvil */
+    gap: 30px;
+  }
+  
+  .about-us-text .section-title {
+    text-align: center; /* Centra el título en móvil */
+  }
+
+  .about-us-image-container {
+    width: 100%;
+    max-width: 400px; /* Controla el tamaño de la imagen en móvil */
+  }
+}

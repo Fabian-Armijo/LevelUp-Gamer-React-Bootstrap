@@ -1,0 +1,48 @@
+.events-map-section {
+  width: 100%;
+  padding: 60px 0;
+  background-color: #1a1a1a; /* Un fondo ligeramente distinto para separar la sección */
+  margin-top: 40px;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+}
+
+.section-title {
+  font-family: var(--font-header);
+  font-size: 2.2rem;
+  color: var(--font-text-primary);
+  margin-bottom: 15px;
+}
+
+.section-subtitle {
+  font-family: var(--font-main);
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.map-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 8; /* Proporción panorámica para el mapa */
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid var(--color-primary-accent);
+}
+
+/* Estilo para el mapa simulado */
+.map-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  color: var(--color-text-secondary);
+  font-size: 1.5rem;
+}
