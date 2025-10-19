@@ -1,0 +1,104 @@
+.site-footer {
+  background-color: #0a0a0a; /* Un negro un poco más suave que el fondo */
+  color: var(--color-text-secondary);
+  padding: 40px 0 20px 0;
+  border-top: 2px solid var(--color-primary-accent);
+  margin-top: 60px;
+}
+
+.footer-content {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  flex-wrap: wrap; /* Permite que se apilen en pantallas pequeñas */
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 250px; /* Ancho mínimo antes de apilarse */
+}
+
+.footer-section.about .logo-container {
+  align-items: flex-start; /* Alinea el logo a la izquierda */
+  margin-bottom: 15px;
+}
+
+.footer-title {
+  font-family: var(--font-header);
+  color: var(--color-text-primary);
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.address {
+  font-family: var(--font-main);
+  line-height: 1.6;
+}
+
+.whatsapp-button {
+  display: inline-block;
+  background-color: #25D366; /* Color de WhatsApp */
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-family: var(--font-header);
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.whatsapp-button:hover {
+  transform: scale(1.05);
+}
+
+.support-text {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+}
+
+.social-links a {
+  color: var(--color-primary-accent);
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--color-secondary-accent);
+  transform: scale(1.2);
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #2a2a2a;
+  font-size: 0.9rem;
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-section {
+    margin-bottom: 30px;
+  }
+  
+  .footer-section.about .logo-container {
+    align-items: center; /* Centra el logo en móvil */
+  }
+}
