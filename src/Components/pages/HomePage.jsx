@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../organisms/Header/Header';
-import ProductSlider from '../organisms/ProductSlider/ProductSlider'; // <-- Importa el slider
+import ProductSlider from '../organisms/ProductSlider/ProductSlider';
+import ProductCatalog from '../organisms/ProductCatalog/ProductCatalog';
 
 const HomePage = () => {
   return (
@@ -11,6 +12,7 @@ const HomePage = () => {
           <h1>Novedades</h1>
         </div>
         <ProductSlider />
+        <ProductCatalog />
       </main>
     </div>
   );
