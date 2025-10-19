@@ -1,51 +1,59 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as ScrollLink } from 'react-scroll';
 import './NavigationMenu.css';
 
 const NavigationMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
+  const handleLinkClick = () => {
+    setIsOpen(false);
   };
 
   const handleProfileChange = (e) => {
     const path = e.target.value;
     if (path) {
-      setIsOpen(false);
+      handleLinkClick();
       navigate(path);
+      e.target.value = "";
     }
   };
 
-  const handleLinkClick = () => {
-    setIsOpen(false);
+  const scrollProps = {
+    spy: true,
+    smooth: true,
+    offset: -80,
+    duration: 500,
+    onClick: handleLinkClick,
+    activeClass: 'active-link',
   };
 
   return (
     <nav className="navigation">
-      <button className="hamburger-button" onClick={toggleMenu}>
+      <button className="hamburger-button" onClick={() => setIsOpen(!isOpen)}>
         ☰
       </button>
 
       <div className={`nav-links ${isOpen ? 'show' : ''}`}>
-        <Link to="/" onClick={handleLinkClick}>Inicio</Link>
-        <select onChange={handleProfileChange} className="profile-select">
-          <option value="">Perfil</option>
+        <ScrollLink to="inicio" {...scrollProps}>Inicio</ScrollLink>
+        <select onChange={handleProfileChange} className="profile-select" value="">
+          <option value="" disabled>Perfil</option>
           <option value="/perfil">Mi Perfil</option>
           <option value="/login">Iniciar Sesión</option>
           <option value="/registro">Registrarse</option>
         </select>
-        <Link to="/slider" onClick={handleLinkClick}>Novedades</Link>
-        <Link to="/catalogo" onClick={handleLinkClick}>Catálogo</Link>
-        <Link to="/eventos" onClick={handleLinkClick}>Eventos</Link>
-        <Link to="/acerca-de" onClick={handleLinkClick}>Acerca de</Link>
-        <Link to="/contacto" onClick={handleLinkClick}>Contacto</Link>
         
-        <Link to="/carrito" className="cart-link" onClick={handleLinkClick}>
+        <ScrollLink to="catalogo" {...scrollProps}>Catálogo</ScrollLink>
+        <ScrollLink to="blog" {...scrollProps}>Blog</ScrollLink>
+        <ScrollLink to="eventos" {...scrollProps}>Eventos</ScrollLink>
+        <ScrollLink to="acerca-de" {...scrollProps}>Acerca de</ScrollLink>
+        <ScrollLink to="contacto" {...scrollProps}>Contacto</ScrollLink>
+        
+        <RouterLink to="/#" className="cart-link" onClick={handleLinkClick}>
           🛒
           <span className="cart-count">0</span>
-        </Link>
+        </RouterLink>
       </div>
     </nav>
   );

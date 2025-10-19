@@ -8,7 +8,7 @@ const Footer = () => {
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hola, necesito ayuda del servicio técnico.`;
 
   return (
-    <footer className="site-footer">
+    <footer id="contacto" className="site-footer">
       <div className="footer-content">
         <div className="footer-section about">
           <Logo />
