@@ -1,0 +1,37 @@
+.reviews-section {
+  border-top: 1px solid var(--color-primary-accent);
+  padding-top: 30px;
+}
+
+.reviews-title {
+  font-family: var(--font-header);
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.review-item {
+  background-color: #1a1a1a;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.star-rating span {
+  color: var(--color-primary-accent);
+  font-size: 1.2rem;
+}
+.star-rating .off {
+  color: #555;
+}
+
+.review-comment {
+  font-family: var(--font-main);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  margin: 10px 0;
+}
+
+.review-author {
+  font-weight: bold;
+  color: var(--color-text-primary);
+}

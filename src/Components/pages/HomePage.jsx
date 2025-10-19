@@ -12,6 +12,9 @@ const HomePage = () => {
           <h1>Novedades</h1>
         </div>
         <ProductSlider />
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <h1>Catalogo</h1>
+        </div>
         <ProductCatalog />
       </main>
     </div>

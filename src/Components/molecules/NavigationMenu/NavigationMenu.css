@@ -17,7 +17,7 @@
 .nav-links {
   display: flex; /* Por defecto es flex para escritorio */
   align-items: center;
-  gap: 25px;
+  gap: 20px;
 }
 
 .nav-links a, .profile-select {

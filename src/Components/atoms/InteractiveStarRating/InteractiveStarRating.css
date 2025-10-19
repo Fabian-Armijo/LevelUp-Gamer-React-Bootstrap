@@ -1,0 +1,5 @@
+.star-rating.interactive span {
+  cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+  font-size: 2rem; /* Estrellas más grandes para el formulario */
+  transition: color 0.2s ease;
+}

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import LoginPage from './Components/pages/LoginPage';
 import RegistrationPage from './Components/pages/RegistrationPage';
 import HomePage from './Components/pages/HomePage';
+import ProductDetailPage from './Components/pages/ProductDetailPage/ProductDetailPage';
 import './App.css';
 
 // Creamos un componente "inteligente" para manejar el layout
@@ -22,13 +23,13 @@ const AppLayout = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegistrationPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/producto/:productId" element={<ProductDetailPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   );
 };
 
-// El componente App ahora solo se encarga del Router
 function App() {
   return (
     <BrowserRouter>
@@ -36,5 +37,7 @@ function App() {
     </BrowserRouter>
   );
 }
+
+
 
 export default App;

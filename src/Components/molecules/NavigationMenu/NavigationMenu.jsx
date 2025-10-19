@@ -40,7 +40,7 @@ const NavigationMenu = () => {
           <option value="/login">Iniciar Sesión</option>
           <option value="/registro">Registrarse</option>
         </select>
-        <Link to="/slider" onClick={handleLinkClick}>Slider</Link>
+        <Link to="/slider" onClick={handleLinkClick}>Novedades</Link>
         <Link to="/catalogo" onClick={handleLinkClick}>Catálogo</Link>
         <Link to="/eventos" onClick={handleLinkClick}>Eventos</Link>
         <Link to="/acerca-de" onClick={handleLinkClick}>Acerca de</Link>
