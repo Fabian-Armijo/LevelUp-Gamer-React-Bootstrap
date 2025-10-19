@@ -2,15 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ProductCard.css';
 
-// A simple component for social sharing
 const SocialShare = ({ productLink }) => {
   const encodedLink = encodeURIComponent(productLink);
   
   return (
     <div className="social-share-buttons">
-      {/* Example for sharing on Facebook */}
       <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`} target="_blank" rel="noopener noreferrer">FB</a>
-      {/* Example for sharing on Twitter */}
       <a href={`https://twitter.com/intent/tweet?url=${encodedLink}&text=Mira este producto!`} target="_blank" rel="noopener noreferrer">TW</a>
     </div>
   );

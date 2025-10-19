@@ -3,7 +3,7 @@
 }
 
 .error-message {
-  color: #ff4d4d; /* Un color rojo para los errores */
+  color: #ff4d4d;
   font-size: 0.875rem;
   margin-top: 5px;
   font-family: var(--font-main);

@@ -9,17 +9,15 @@ const ReviewForm = ({ onAddReview }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validación simple
     if (rating === 0 || comment.trim() === '') {
       setError('Por favor, selecciona una calificación y escribe un comentario.');
       return;
     }
     
-    // Envía la nueva reseña al componente padre
     onAddReview({
       rating,
       comment,
-      author: 'Usuario Anónimo' // Lo dejamos así por ahora
+      author: 'Usuario Anónimo'
     });
 
     // Resetea el formulario

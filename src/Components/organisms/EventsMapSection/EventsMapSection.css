@@ -1,7 +1,7 @@
 .events-map-section {
   width: 100%;
   padding: 60px 0;
-  background-color: #1a1a1a; /* Un fondo ligeramente distinto para separar la sección */
+  background-color: #1a1a1a;
   margin-top: 40px;
 }
 
@@ -29,7 +29,7 @@
   width: 90%;
   max-width: 1200px;
   margin: 0 auto;
-  aspect-ratio: 16 / 8; /* Proporción panorámica para el mapa */
+  aspect-ratio: 16 / 8;
   border-radius: 10px;
   overflow: hidden;
   border: 2px solid var(--color-primary-accent);

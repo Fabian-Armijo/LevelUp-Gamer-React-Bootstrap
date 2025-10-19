@@ -4,8 +4,8 @@
   overflow: hidden;
   border: 1px solid transparent;
   transition: all 0.3s ease;
-  height: 100%; /* Ensures all cards in a row have the same height */
-  display: flex; /* Flexbox to make the link fill the card */
+  height: 100%;
+  display: flex;
   flex-direction: column;
 }
 
@@ -19,7 +19,7 @@
   color: inherit;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Makes the link expand to the full card height */
+  flex-grow: 1;
 }
 
 .blog-card-image-container {
@@ -38,7 +38,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Pushes the footer to the bottom */
+  flex-grow: 1;
 }
 
 .blog-card-title {
@@ -53,7 +53,7 @@
   color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
-  flex-grow: 1; /* Takes up available space */
+  flex-grow: 1;
 }
 
 .blog-card-footer {

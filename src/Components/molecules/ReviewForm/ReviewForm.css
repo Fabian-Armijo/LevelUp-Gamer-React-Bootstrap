@@ -33,7 +33,6 @@
 }
 
 .submit-review-btn {
-  /* Reutilizamos un estilo similar al de "Añadir al Carrito" */
   width: 100%;
   background-color: var(--color-primary-accent);
   color: var(--color-text-primary);

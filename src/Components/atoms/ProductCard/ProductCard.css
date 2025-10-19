@@ -13,7 +13,7 @@
 
 .product-image-link {
   display: block;
-  aspect-ratio: 1 / 1; /* Makes the image container a perfect square */
+  aspect-ratio: 1 / 1;
 }
 
 .product-image {
@@ -56,7 +56,7 @@
   margin: 0;
 }
 
-/* Social Share Buttons */
+/* Botones de compartir */
 .social-share-buttons a {
   font-family: var(--font-header);
   color: var(--color-primary-accent);

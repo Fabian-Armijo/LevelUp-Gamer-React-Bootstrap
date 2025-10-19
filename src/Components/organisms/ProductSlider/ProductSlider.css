@@ -5,12 +5,10 @@
   padding: 0 40px;
 }
 
-/* --- Personalización de React Slick --- */
 .slick-slide > div {
-  margin: 0 10px; /* Espacio entre slides */
+  margin: 0 10px;
 }
 
-/* Estilo de los puntos de navegación */
 .slick-dots li button:before {
   font-size: 12px;
   color: var(--color-primary-accent) !important;
@@ -21,7 +19,6 @@
   color: var(--color-secondary-accent) !important;
 }
 
-/* Estilo de las flechas de navegación */
 .slick-prev:before,
 .slick-next:before {
   font-size: 25px;
@@ -34,11 +31,9 @@
 
 @media (max-width: 768px) {
   .slider-section {
-    /* Reduce el espaciado lateral en móviles */
     padding: 0 15px;
   }
 
-  /* Oculta las flechas en pantallas táctiles */
   .slick-prev,
   .slick-next {
     display: none !important;

@@ -4,7 +4,7 @@
   padding: 30px;
   border: 2px solid var(--color-primary-accent);
   border-radius: 10px;
-  background-color: #1a1a1a; /* Un gris muy oscuro para destacar */
+  background-color: #1a1a1a;
 }
 
 .form-container h2 {
@@ -41,8 +41,7 @@
   color: var(--color-secondary-accent);
 }
 
-/* Estilo específico para el mensaje de error del checkbox */
 .error-message.terms-error {
   margin-top: 0;
-  margin-bottom: 20px; /* Margen para separar del botón */
+  margin-bottom: 20px;
 }

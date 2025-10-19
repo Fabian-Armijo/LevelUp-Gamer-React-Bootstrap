@@ -1,12 +1,12 @@
 .logo-container {
   display: flex;
   align-items: center;
-  flex-direction: column; /* Apila la imagen y el texto */
+  flex-direction: column;
   text-decoration: none;
 }
 
 .logo-img {
-  width: 50px; /* Tamaño del logo en el header */
+  width: 50px;
   height: auto;
 }
 
@@ -19,5 +19,5 @@
 }
 
 .logo-container:hover .logo-text {
-  color: var(--color-secondary-accent); /* Efecto hover */
+  color: var(--color-secondary-accent);
 }

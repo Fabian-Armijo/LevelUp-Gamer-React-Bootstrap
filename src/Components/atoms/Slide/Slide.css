@@ -22,7 +22,7 @@
 }
 
 .slide-container:hover .slide-image {
-  transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+  transform: scale(1.1);
 }
 
 .slide-overlay {
@@ -53,7 +53,7 @@
 .slide-price {
   font-family: var(--font-header);
   font-size: 1.5rem;
-  color: var(--color-secondary-accent); /* Verde neón para el precio */
+  color: var(--color-secondary-accent);
   display: block;
 }
 
@@ -62,22 +62,22 @@
 /* Para tablets y pantallas medianas */
 @media (max-width: 992px) {
   .slide-container {
-    height: 450px; /* Reducimos la altura */
+    height: 450px;
   }
 
   .slide-name {
-    font-size: 1.5rem; /* Achicamos el nombre */
+    font-size: 1.5rem;
   }
 
   .slide-price {
-    font-size: 1.3rem; /* Achicamos el precio */
+    font-size: 1.3rem;
   }
 }
 
 /* Para móviles */
 @media (max-width: 576px) {
   .slide-container {
-    height: 350px; /* Altura aún más reducida para móviles */
+    height: 350px;
   }
 
   .slide-name {
@@ -85,7 +85,7 @@
   }
 
   .slide-description {
-    display: none; /* Ocultamos la descripción en pantallas muy pequeñas */
+    display: none;
   }
 
   .slide-price {
@@ -93,7 +93,6 @@
   }
 
   .slide-overlay {
-    /* Menos padding en móviles */
     padding: 20px 15px 15px 15px;
   }
 }

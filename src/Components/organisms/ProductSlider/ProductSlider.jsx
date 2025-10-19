@@ -3,7 +3,6 @@ import Slider from 'react-slick';
 import Slide from '../../atoms/Slide/Slide';
 import './ProductSlider.css';
 
-// Datos de ejemplo para los productos
 const productsData = [
   {
     id: 1,
@@ -49,7 +48,7 @@ const ProductSlider = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
-    arrows: true, // Muestra las flechas
+    arrows: true,
   };
 
   return (

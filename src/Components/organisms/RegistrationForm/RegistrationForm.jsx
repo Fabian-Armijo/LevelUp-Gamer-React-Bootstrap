@@ -66,14 +66,12 @@ const RegistrationForm = ({ onRegistrationSuccess }) => {
     <div className="form-container">
       <h2>Registro de Usuario</h2>
       <form onSubmit={handleSubmit} noValidate>
-        {/* ... (todos los FormField se mantienen igual) ... */}
         <FormField label="Nombre de Usuario" type="text" name="username" placeholder="Entre 4 y 12 caracteres" value={formData.username} onChange={handleChange} error={errors.username} />
         <FormField label="Correo Electrónico" type="email" name="email" placeholder="tucorreo@ejemplo.com" value={formData.email} onChange={handleChange} error={errors.email} />
         <FormField label="Contraseña" type="password" name="password" placeholder="Entre 6 y 12 caracteres" value={formData.password} onChange={handleChange} error={errors.password} />
         <FormField label="Repetir Contraseña" type="password" name="confirmPassword" placeholder="Repite tu contraseña" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
         <FormField label="Fecha de Nacimiento" type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} error={errors.birthDate} />
 
-        {/* 4. Campo de Checkbox añadido aquí */}
         <div className="terms-container">
           <Checkbox
             id="terms"

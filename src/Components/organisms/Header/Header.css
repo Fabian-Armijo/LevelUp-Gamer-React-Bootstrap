@@ -10,7 +10,7 @@
 
 .header-content {
   width: 90%;
-  max-width: 1200px; /* Ancho máximo para el contenido */
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;

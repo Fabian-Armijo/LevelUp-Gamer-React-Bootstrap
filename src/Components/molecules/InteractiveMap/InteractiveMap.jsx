@@ -15,18 +15,14 @@ const eventLocations = [
 ];
 
 const InteractiveMap = () => {
-  // Coordenadas para centrar el mapa inicialmente (Santiago)
   const mapCenter = [-33.45, -70.6667];
 
   return (
     <MapContainer center={mapCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
-      {/* La capa de "azulejos" que forma el mapa visual */}
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-
-      {/* Mapeamos sobre nuestras ubicaciones para crear un marcador para cada una */}
       {eventLocations.map((location, index) => (
         <Marker key={index} position={location.position}>
           <Popup>

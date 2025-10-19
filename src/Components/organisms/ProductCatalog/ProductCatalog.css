@@ -8,7 +8,7 @@
 }
 
 .filter-sidebar {
-  flex: 0 0 250px; /* Sidebar width */
+  flex: 0 0 250px;
   background-color: #1a1a1a;
   padding: 20px;
   border-radius: 8px;

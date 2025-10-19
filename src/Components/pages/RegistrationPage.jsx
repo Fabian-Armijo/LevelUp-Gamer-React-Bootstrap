@@ -1,6 +1,6 @@
 // src/pages/RegistrationPage.jsx
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importamos Link y useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import RegistrationForm from '../organisms/RegistrationForm/RegistrationForm';
 import miLogo from '../../assets/imagenes/logo/logo.png';
 

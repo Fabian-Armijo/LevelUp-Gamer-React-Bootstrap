@@ -1,5 +1,5 @@
 .site-footer {
-  background-color: #0a0a0a; /* Un negro un poco más suave que el fondo */
+  background-color: #0a0a0a;
   color: var(--color-text-secondary);
   padding: 40px 0 20px 0;
   border-top: 2px solid var(--color-primary-accent);
@@ -14,16 +14,16 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 30px;
-  flex-wrap: wrap; /* Permite que se apilen en pantallas pequeñas */
+  flex-wrap: wrap;
 }
 
 .footer-section {
   flex: 1;
-  min-width: 250px; /* Ancho mínimo antes de apilarse */
+  min-width: 250px;
 }
 
 .footer-section.about .logo-container {
-  align-items: flex-start; /* Alinea el logo a la izquierda */
+  align-items: flex-start;
   margin-bottom: 15px;
 }
 
@@ -41,7 +41,7 @@
 
 .whatsapp-button {
   display: inline-block;
-  background-color: #25D366; /* Color de WhatsApp */
+  background-color: #25D366;
   color: #fff;
   padding: 10px 20px;
   border-radius: 50px;
@@ -99,6 +99,6 @@
   }
   
   .footer-section.about .logo-container {
-    align-items: center; /* Centra el logo en móvil */
+    align-items: center;
   }
 }
