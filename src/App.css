@@ -100,6 +100,10 @@
   color: var(--color-secondary-accent);
 }
 
+.main-layout {
+  width: 100%;
+}
+
 /* --- MEDIA QUERY PARA RESPONSIVIDAD --- */
 /* Se aplicará en pantallas de 800px de ancho o menos */
 @media (max-width: 800px) {

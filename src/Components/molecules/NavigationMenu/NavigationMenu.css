@@ -1,20 +1,23 @@
 .navigation {
   position: relative;
+  margin-left: 30px;
 }
 
 .hamburger-button {
-  display: none; /* Oculto en pantallas grandes */
+  display: none; /* Oculto en escritorio */
   font-size: 2rem;
   color: var(--color-primary-accent);
   background: none;
   border: none;
   cursor: pointer;
+  z-index: 1001; /* Asegura que esté por encima del menú */
 }
 
+/* Contenedor principal de los enlaces */
 .nav-links {
-  display: flex;
+  display: flex; /* Por defecto es flex para escritorio */
   align-items: center;
-  gap: 25px; /* Espacio entre enlaces en desktop */
+  gap: 25px;
 }
 
 .nav-links a, .profile-select {
@@ -25,6 +28,7 @@
   padding: 5px 10px;
   transition: all 0.3s ease;
   border-bottom: 2px solid transparent;
+  white-space: nowrap; /* Evita que el texto se parta en dos líneas */
 }
 
 .nav-links a:hover {
@@ -32,7 +36,6 @@
   border-bottom-color: var(--color-secondary-accent);
 }
 
-/* Estilo para el select */
 .profile-select {
   background-color: transparent;
   border: none;
@@ -43,27 +46,50 @@
   text-align: center;
 }
 
-.profile-select:focus {
-  outline: none;
-}
-
+.profile-select:focus { outline: none; }
 .profile-select option {
   background-color: var(--color-background);
   color: var(--color-text-primary);
-  border: none;
+}
+
+.cart-link {
+  position: relative;
+  font-size: 1.5rem;
+  padding-bottom: 5px; /* Alineación vertical con los otros enlaces */
+}
+.cart-link:hover {
+  border-bottom-color: transparent !important; /* El carrito no necesita subrayado */
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: var(--color-primary-accent);
+  color: var(--color-text-primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-family: var(--font-main);
+  font-weight: bold;
 }
 
 /* --- ESTILOS RESPONSIVOS --- */
-@media (max-width: 992px) {
+@media (max-width: 1070px) {
   .hamburger-button {
-    display: block; /* Muestra el botón en móviles */
+    display: block; /* Muestra el botón en móvil */
   }
 
   .nav-links {
-    display: none; /* Oculta el menú por defecto */
+    display: none; /* Oculta el menú por defecto en móvil */
     flex-direction: column;
+    align-items: flex-start; /* Alinea los items a la izquierda */
     position: absolute;
-    top: 50px; /* Debajo del botón */
+    top: 50px;
     right: 0;
     background-color: #1a1a1a;
     width: 250px;
@@ -73,8 +99,9 @@
     z-index: 1000;
   }
 
+  /* Muestra el menú cuando está abierto */
   .nav-links.show {
-    display: flex; /* Muestra el menú cuando está abierto */
+    display: flex;
   }
   
   .nav-links a, .profile-select {

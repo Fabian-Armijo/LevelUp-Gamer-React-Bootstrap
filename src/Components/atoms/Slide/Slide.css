@@ -1,0 +1,98 @@
+.slide-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 550px;
+}
+
+.slide-link {
+  display: block;
+  text-decoration: none;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.slide-container:hover .slide-image {
+  transform: scale(1.1); /* Efecto de zoom al pasar el mouse */
+}
+
+.slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+  padding: 40px 20px 20px 20px;
+  color: var(--color-text-primary);
+  transition: opacity 0.4s ease;
+}
+
+.slide-name {
+  font-family: var(--font-header);
+  font-size: 1.8rem;
+  margin: 0 0 10px 0;
+  color: var(--color-text-primary);
+}
+
+.slide-description {
+  font-family: var(--font-main);
+  color: var(--color-text-secondary);
+  margin: 0 0 15px 0;
+  font-size: 0.9rem;
+}
+
+.slide-price {
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  color: var(--color-secondary-accent); /* Verde neón para el precio */
+  display: block;
+}
+
+/* --- ESTILOS RESPONSIVOS --- */
+
+/* Para tablets y pantallas medianas */
+@media (max-width: 992px) {
+  .slide-container {
+    height: 450px; /* Reducimos la altura */
+  }
+
+  .slide-name {
+    font-size: 1.5rem; /* Achicamos el nombre */
+  }
+
+  .slide-price {
+    font-size: 1.3rem; /* Achicamos el precio */
+  }
+}
+
+/* Para móviles */
+@media (max-width: 576px) {
+  .slide-container {
+    height: 350px; /* Altura aún más reducida para móviles */
+  }
+
+  .slide-name {
+    font-size: 1.2rem;
+  }
+
+  .slide-description {
+    display: none; /* Ocultamos la descripción en pantallas muy pequeñas */
+  }
+
+  .slide-price {
+    font-size: 1.1rem;
+  }
+
+  .slide-overlay {
+    /* Menos padding en móviles */
+    padding: 20px 15px 15px 15px;
+  }
+}

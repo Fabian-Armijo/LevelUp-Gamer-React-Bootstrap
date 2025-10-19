@@ -1,14 +1,16 @@
-// src/pages/HomePage.jsx
 import React from 'react';
 import Header from '../organisms/Header/Header';
+import ProductSlider from '../organisms/ProductSlider/ProductSlider'; // <-- Importa el slider
 
 const HomePage = () => {
   return (
     <div>
       <Header />
-      <main style={{ padding: '20px', minHeight: '100vh', textAlign: 'center' }}>
-        <h1>Bienvenido a LevelUp-Gamer</h1>
-        <p>Aquí irá el resto de tu increíble página.</p>
+      <main>
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <h1>Novedades</h1>
+        </div>
+        <ProductSlider />
       </main>
     </div>
   );
