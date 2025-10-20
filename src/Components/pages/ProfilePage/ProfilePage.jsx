@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.jsx
 import React, { useState } from 'react';
 import Header from '../../organisms/Header/Header';
 import FormField from '../../molecules/FormField/FormField';
