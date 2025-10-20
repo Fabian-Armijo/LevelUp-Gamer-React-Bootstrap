@@ -126,7 +126,7 @@ const CartPage = () => {
                           >
                             -
                           </Button>
-                          <span className="mx-2">{item.quantity}</span>
+                          <span className="mx-2 quantity-number">{item.quantity}</span>
                           <Button
                             variant="outline-secondary"
                             size="sm"

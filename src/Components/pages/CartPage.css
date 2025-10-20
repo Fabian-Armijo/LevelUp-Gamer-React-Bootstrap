@@ -1,17 +1,69 @@
-/* src/Components/pages/CartPage/CartPage.css */
+/* Fondo general del carrito */
 .cart-page {
-  background-color: #fff;
+  background-color: rgba(30, 144, 255, 0.05); /* más suave */
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+/* Título */
 .cart-page h2 {
   font-weight: 600;
   text-align: center;
 }
 
+/* Total */
 .cart-total {
   font-size: 1.2rem;
   font-weight: bold;
+}
+
+/* Tabla: quitar blancos y cambiar color de fondo */
+.cart-page table {
+  background-color: #f0f8ff; /* color de fondo de toda la tabla */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cart-page table th {
+  background-color: #1E90FF; /* encabezados azules */
+  color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+.cart-page table td {
+  background-color: #e6f2ff; /* filas más claras */
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* Filas impares con color distinto (opcional) */
+.cart-page table tbody tr:nth-child(odd) td {
+  background-color: #d6eaff;
+}
+
+/* Bordes redondeados solo en la tabla */
+.cart-page table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.cart-page table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.cart-page table td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.cart-page table td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.cart-page .quantity-number {
+  color: black;
+  font-weight: bold;
+  min-width: 20px; /* opcional, para que no se encime al botón */
+  text-align: center;
+  display: inline-block;
 }
