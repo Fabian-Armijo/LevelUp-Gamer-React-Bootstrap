@@ -5,11 +5,11 @@ import LoginPage from './Components/pages/LoginPage';
 import RegistrationPage from './Components/pages/RegistrationPage';
 import HomePage from './Components/pages/HomePage';
 import ProductDetailPage from './Components/pages/ProductDetailPage/ProductDetailPage';
-import CartPage from './Components/pages/CartPage'; // ✅ Importa el carrito
+import CartPage from './Components/pages/CartPage';
 import Footer from './Components/organisms/Footer/Footer';
+import ProfilePage from './Components/pages/ProfilePage/ProfilePage';
 import './App.css';
 
-// Componente "inteligente" para manejar el layout
 const AppLayout = () => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/registro';
@@ -24,10 +24,8 @@ const AppLayout = () => {
         <Route path="/registro" element={<RegistrationPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:productId" element={<ProductDetailPage />} />
-        
-        {/* ✅ Nueva ruta del carrito */}
+        <Route path="/perfil" element={<ProfilePage />} />
         <Route path="/carrito" element={<CartPage />} />
-
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {showFooter && <Footer />}

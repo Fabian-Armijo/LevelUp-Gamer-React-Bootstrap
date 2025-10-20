@@ -1,0 +1,96 @@
+/* src/pages/ProfilePage.css */
+.profile-page-container {
+  width: 90%;
+  max-width: 800px;
+  margin: 40px auto;
+  color: var(--color-text-primary);
+}
+
+.profile-title {
+  font-family: var(--font-header);
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+}
+
+.profile-form {
+  background-color: #1a1a1a;
+  padding: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary-accent);
+}
+
+.profile-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.profile-section:last-of-type {
+  border-bottom: none;
+}
+
+.profile-section h2 {
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  color: var(--color-primary-accent);
+  margin-bottom: 20px;
+}
+
+.form-field-container input:disabled {
+  background-color: #2a2a2a;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-field label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--font-main);
+}
+
+.checkbox-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  accent-color: var(--color-secondary-accent);
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.edit-button, .cancel-button {
+  background-color: transparent;
+  border: 2px solid var(--color-primary-accent);
+  color: var(--color-primary-accent);
+  padding: 10px 25px;
+  font-family: var(--font-header);
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover, .cancel-button:hover {
+  background-color: var(--color-primary-accent);
+  color: var(--color-text-primary);
+}
+
+.password-note {
+  font-family: var(--font-main);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-top: -15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
