@@ -28,6 +28,7 @@
   transition: all 0.3s ease;
   border-bottom: 2px solid transparent;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .nav-links a:hover {
