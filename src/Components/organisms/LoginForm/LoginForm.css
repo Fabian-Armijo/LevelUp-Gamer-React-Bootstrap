@@ -15,6 +15,17 @@
   text-decoration: underline;
 }
 
-.form-message.error-message {
-    color: #ff4d4d;
+.error-message {
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-family: var(--font-main);
+}
+.success-message {
+  color: #28a745; /* verde suave */
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-family: var(--font-main);
 }
