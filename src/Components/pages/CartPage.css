@@ -1,69 +1,102 @@
-/* Fondo general del carrito */
+/* Contenedor principal de la página del carrito */
 .cart-page {
-  background-color: rgba(30, 144, 255, 0.05); /* más suave */
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+  background-color: #1a1a1a; /* Fondo de contenedor oscuro */
+  padding: 20px 30px;
+  border-radius: 10px;
+  border: 1px solid var(--color-primary-accent); /* Borde Azul Eléctrico */
+  box-shadow: 0 4px 25px rgba(30, 144, 255, 0.1);
 }
 
-/* Título */
+/* Título de la página (usando tu fuente de encabezado) */
 .cart-page h2 {
-  font-weight: 600;
+  font-family: var(--font-header), 'Orbitron', sans-serif;
+  color: var(--color-primary-accent);
   text-align: center;
+  font-weight: 600;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
 }
 
-/* Total */
-.cart-total {
-  font-size: 1.2rem;
-  font-weight: bold;
+/* --- ESTILOS DE LA TABLA DEL CARRITO --- */
+
+/* Contenedor de la tabla para responsividad */
+.cart-table-container {
+  overflow-x: auto; /* Permite scroll horizontal en móviles */
 }
 
-/* Tabla: quitar blancos y cambiar color de fondo */
 .cart-page table {
-  background-color: #f0f8ff; /* color de fondo de toda la tabla */
-  border-radius: 12px;
-  overflow: hidden;
+  width: 100%;
+  border-collapse: collapse; /* Bordes limpios */
+  background-color: transparent;
 }
 
 .cart-page table th {
-  background-color: #1E90FF; /* encabezados azules */
-  color: white;
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-header), 'Orbitron', sans-serif;
   font-weight: 600;
   text-align: center;
+  font-size: 1rem;
+  padding: 15px;
+  border-bottom: 2px solid var(--color-primary-accent);
 }
 
 .cart-page table td {
-  background-color: #e6f2ff; /* filas más claras */
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  font-family: var(--font-main), 'Roboto', sans-serif;
   vertical-align: middle;
   text-align: center;
+  padding: 20px 10px;
+  border-top: 1px solid #2a2a2a; /* Separador de fila sutil */
 }
 
-/* Filas impares con color distinto (opcional) */
-.cart-page table tbody tr:nth-child(odd) td {
-  background-color: #d6eaff;
+/* --- CELDAS ESPECIALES --- */
+
+/* Celda de la imagen del producto */
+.cart-page .product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
-/* Bordes redondeados solo en la tabla */
-.cart-page table th:first-child {
-  border-top-left-radius: 12px;
-}
-
-.cart-page table th:last-child {
-  border-top-right-radius: 12px;
-}
-
-.cart-page table td:first-child {
-  border-bottom-left-radius: 12px;
-}
-
-.cart-page table td:last-child {
-  border-bottom-right-radius: 12px;
-}
-
-.cart-page .quantity-number {
-  color: black;
+/* Celda del nombre del producto */
+.cart-page .product-name {
+  color: var(--color-text-primary);
   font-weight: bold;
-  min-width: 20px; /* opcional, para que no se encime al botón */
-  text-align: center;
-  display: inline-block;
+  font-size: 1.1rem;
+}
+
+/* Celda del precio (con acento verde neón) */
+.cart-page .product-price {
+  font-family: var(--font-header), 'Orbitron', sans-serif;
+  color: var(--color-secondary-accent);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* --- CONTROLES DE CANTIDAD --- */
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Botones de +/- */
+.quantity-controls button {
+  background: transparent;
+  border: 1px solid var(--color-primary-accent);
+  color: var(--color-primary-accent);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer
 }
