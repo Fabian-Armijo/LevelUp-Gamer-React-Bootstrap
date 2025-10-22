@@ -3,6 +3,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import CartPage from '../Components/pages/CartPage';
 import '@testing-library/jest-dom';
 
+beforeAll(() => {
+  window.alert = jest.fn(); // Evita el "not implemented"
+});
+
 // MOCK de react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({

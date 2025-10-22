@@ -4,6 +4,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import RegistrationPage from './RegistrationPage';
 import RegistrationForm from '../organisms/RegistrationForm/RegistrationForm';
 
+beforeAll(() => {
+  window.alert = jest.fn(); // Evita el "not implemented"
+});
+
 // Mock de useNavigate de react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
