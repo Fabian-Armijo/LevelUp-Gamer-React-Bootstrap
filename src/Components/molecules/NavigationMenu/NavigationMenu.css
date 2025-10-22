@@ -19,19 +19,20 @@
   gap: 20px;
 }
 
-/* 🔹 Enlaces, SELECT y BUTTON con mismo estilo (MODIFICADO) */
+/* 🔹 Enlaces, SELECT y BUTTON con mismo estilo */
 .nav-links a,
-.nav-links button, /* <--- CAMBIO: Incluye los botones */
+.nav-links button,
 .profile-select {
   font-family: var(--font-header);
   color: var(--color-text-primary);
   text-decoration: none;
   font-size: 1rem;
   padding: 5px 10px;
-  transition: all 0.3s ease;
+  /* CAMBIO: Transición más rápida (0.15s) */
+  transition: all 0.15s ease;
   border: none !important;
-  background: none !important; /* 🔥 Elimina cualquier fondo blanco */
-  box-shadow: none !important; /* 🔥 Evita sombras tipo botón */
+  background: none !important; 
+  box-shadow: none !important; 
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   cursor: pointer;
@@ -40,7 +41,7 @@
 }
 
 .nav-links a:hover,
-.nav-links button:hover, /* <--- CAMBIO: Incluye el hover de los botones */
+.nav-links button:hover,
 .profile-select:hover {
   color: var(--color-secondary-accent);
   border-bottom-color: var(--color-secondary-accent);
@@ -81,7 +82,8 @@
   padding-bottom: 5px;
   color: var(--color-text-primary);
   text-decoration: none;
-  transition: color 0.3s ease;
+  /* CAMBIO: Transición más rápida (0.15s) */
+  transition: color 0.15s ease;
 }
 
 .cart-link:hover {
@@ -132,7 +134,7 @@
   }
 
   .nav-links a,
-  .nav-links button, /* <--- CAMBIO: Incluye los botones en el responsive */
+  .nav-links button,
   .profile-select {
     width: 100%;
     text-align: left;
@@ -142,7 +144,7 @@
   }
 
   .nav-links a:hover,
-  .nav-links button:hover, /* <--- CAMBIO: Incluye el hover de los botones en el responsive */
+  .nav-links button:hover,
   .profile-select:hover {
     border-bottom-color: var(--color-secondary-accent);
   }

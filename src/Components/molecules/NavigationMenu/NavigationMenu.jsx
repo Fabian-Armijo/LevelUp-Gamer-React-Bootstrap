@@ -50,7 +50,7 @@ const NavigationMenu = () => {
       setTimeout(() => {
         const event = new CustomEvent('scrollToSection', { detail: sectionId });
         window.dispatchEvent(event);
-      }, 300); // pequeño retraso para que la Home se monte
+      }, 100); // pequeño retraso para que la Home se monte
     } else {
       const event = new CustomEvent('scrollToSection', { detail: sectionId });
       window.dispatchEvent(event);
