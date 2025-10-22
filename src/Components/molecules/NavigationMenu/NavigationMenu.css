@@ -19,25 +19,44 @@
   gap: 20px;
 }
 
-.nav-links a, .profile-select {
+/* 🔹 Enlaces, SELECT y BUTTON con mismo estilo (MODIFICADO) */
+.nav-links a,
+.nav-links button, /* <--- CAMBIO: Incluye los botones */
+.profile-select {
   font-family: var(--font-header);
   color: var(--color-text-primary);
   text-decoration: none;
   font-size: 1rem;
   padding: 5px 10px;
   transition: all 0.3s ease;
+  border: none !important;
+  background: none !important; /* 🔥 Elimina cualquier fondo blanco */
+  box-shadow: none !important; /* 🔥 Evita sombras tipo botón */
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   cursor: pointer;
+  outline: none !important;
+  appearance: none;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links button:hover, /* <--- CAMBIO: Incluye el hover de los botones */
+.profile-select:hover {
   color: var(--color-secondary-accent);
   border-bottom-color: var(--color-secondary-accent);
 }
 
+/* 🔥 Extra: fuerza que react-scroll no meta estilos raros */
+.nav-links a.active-link {
+  color: var(--color-secondary-accent);
+  border-bottom-color: var(--color-secondary-accent);
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* 🔹 Select de perfil */
 .profile-select {
-  background-color: transparent;
+  background: none;
   border: none;
   cursor: pointer;
   -webkit-appearance: none;
@@ -46,18 +65,27 @@
   text-align: center;
 }
 
-.profile-select:focus { outline: none; }
+.profile-select:focus {
+  outline: none;
+}
+
 .profile-select option {
   background-color: var(--color-background);
   color: var(--color-text-primary);
 }
 
+/* 🔹 Ícono del carrito */
 .cart-link {
   position: relative;
   font-size: 1.5rem;
   padding-bottom: 5px;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
+
 .cart-link:hover {
+  color: var(--color-secondary-accent);
   border-bottom-color: transparent !important;
 }
 
@@ -102,11 +130,20 @@
   .nav-links.show {
     display: flex;
   }
-  
-  .nav-links a, .profile-select {
+
+  .nav-links a,
+  .nav-links button, /* <--- CAMBIO: Incluye los botones en el responsive */
+  .profile-select {
     width: 100%;
     text-align: left;
     padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .nav-links a:hover,
+  .nav-links button:hover, /* <--- CAMBIO: Incluye el hover de los botones en el responsive */
+  .profile-select:hover {
+    border-bottom-color: var(--color-secondary-accent);
   }
 }
-

@@ -1,7 +1,5 @@
-// src/Components/organisms/NavigationMenu/NavigationMenu.jsx
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Link as ScrollLink } from 'react-scroll';
 import './NavigationMenu.css';
 
 const NavigationMenu = () => {
@@ -45,13 +43,19 @@ const NavigationMenu = () => {
     };
   }, []);
 
-  const scrollProps = {
-    spy: true,
-    smooth: true,
-    offset: -80,
-    duration: 500,
-    onClick: handleLinkClick,
-    activeClass: 'active-link',
+  // ✅ Nueva función: permite hacer scroll incluso si estás fuera del Home
+  const handleScrollLink = (sectionId) => {
+    if (window.location.pathname !== '/') {
+      navigate('/'); // volvemos al inicio
+      setTimeout(() => {
+        const event = new CustomEvent('scrollToSection', { detail: sectionId });
+        window.dispatchEvent(event);
+      }, 300); // pequeño retraso para que la Home se monte
+    } else {
+      const event = new CustomEvent('scrollToSection', { detail: sectionId });
+      window.dispatchEvent(event);
+    }
+    handleLinkClick();
   };
 
   return (
@@ -61,7 +65,7 @@ const NavigationMenu = () => {
       </button>
 
       <div className={`nav-links ${isOpen ? 'show' : ''}`}>
-        <ScrollLink to="inicio" {...scrollProps}>Inicio</ScrollLink>
+        <button onClick={() => handleScrollLink('inicio')}>Inicio</button>
 
         <select onChange={handleProfileChange} className="profile-select" value="">
           <option value="" disabled>Perfil</option>
@@ -70,11 +74,11 @@ const NavigationMenu = () => {
           <option value="/registro">Registrarse</option>
         </select>
 
-        <ScrollLink to="catalogo" {...scrollProps}>Catálogo</ScrollLink>
-        <ScrollLink to="blog" {...scrollProps}>Blog</ScrollLink>
-        <ScrollLink to="eventos" {...scrollProps}>Eventos</ScrollLink>
-        <ScrollLink to="acerca-de" {...scrollProps}>Acerca de</ScrollLink>
-        <ScrollLink to="contacto" {...scrollProps}>Contacto</ScrollLink>
+        <button onClick={() => handleScrollLink('catalogo')}>Catálogo</button>
+        <button onClick={() => handleScrollLink('blog')}>Blog</button>
+        <button onClick={() => handleScrollLink('eventos')}>Eventos</button>
+        <button onClick={() => handleScrollLink('acerca-de')}>Acerca de</button>
+        <button onClick={() => handleScrollLink('contacto')}>Contacto</button>
 
         {/* ✅ Ícono del carrito con contador */}
         <RouterLink to="/carrito" className="cart-link" onClick={handleLinkClick}>
