@@ -8,7 +8,7 @@ const blogPosts = [
     title: 'Guía Definitiva: Cómo Limpiar tu PC Gamer sin Dañarlo',
     author: 'Equipo LevelUp', 
     date: '18 Oct, 2025',
-    image: 'https://images.unsplash.com/photo-1575024357670-2b5164f47061?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://i.blogs.es/0d48a7/limpiar/1366_2000.jpeg',
     excerpt: 'Mantener tu PC limpio es crucial para su rendimiento. Te mostramos los pasos y herramientas necesarias para hacerlo de forma segura y eficiente.'
   },
   { 
@@ -24,7 +24,7 @@ const blogPosts = [
     title: '¿Vale la Pena un Monitor Curvo? Pros y Contras',
     author: 'Carlos Tech', 
     date: '12 Oct, 2025',
-    image: 'https://images.unsplash.com/photo-1624555130581-1d9078519fcf?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://img.pccomponentes.com/pcblog/5351/ventajas-monitores-curvos.jpg',
     excerpt: 'Analizamos la inmersión, el campo de visión y el impacto en el rendimiento para ayudarte a decidir si un monitor curvo es la elección correcta para tu setup.'
   }
 ];
