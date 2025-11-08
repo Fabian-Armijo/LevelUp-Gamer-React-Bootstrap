@@ -14,7 +14,8 @@ const SocialShare = ({ productLink }) => {
 };
 
 const ProductCard = ({ product }) => {
-  const { id, name, image, price, category } = product;
+  // CAMBIO 1: 'imageUrl' se renombra a 'image'
+  const { id, name, imageUrl: image, price, category } = product;
   const productUrl = `${window.location.origin}/producto/${id}`;
 
   return (
@@ -26,7 +27,8 @@ const ProductCard = ({ product }) => {
         <span className="product-category">{category}</span>
         <h4 className="product-name">{name}</h4>
         <div className="product-footer">
-          <p className="product-price">{price}</p>
+          {/* CAMBIO 2: Formato de precio para 'es-CL' */}
+          <p className="product-price">${price.toLocaleString('es-CL')}</p>
           <SocialShare productLink={productUrl} />
         </div>
       </div>

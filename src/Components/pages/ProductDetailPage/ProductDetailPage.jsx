@@ -1,45 +1,93 @@
 // src/Components/pages/ProductDetailPage/ProductDetailPage.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // --> 1. Importa useState y useEffect
 import { useParams } from 'react-router-dom';
 import Header from '../../organisms/Header/Header';
-import { allProducts } from '../../../data/products';
+// import { allProducts } from '../../../data/products'; // --> 2. ELIMINA la data local
+import ProductService from '../../../Services/ProductService'; 
 import ReviewsSection from '../../organisms/ReviewsSection/ReviewsSection';
 import { Button } from 'react-bootstrap';
 import './ProductDetailPage.css';
 
-const isDuocUser = true;
+const isDuocUser = true; // Asumimos que esto sigue bien
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
-  const product = allProducts.find(p => p.id === parseInt(productId));
+  
+  // --> 4. CREA ESTADOS para el producto, la carga y el error
+  const [product, setProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!product) {
+  // --> 5. AGREGA useEffect para cargar los datos del backend
+  useEffect(() => {
+    // Resetea los estados por si el usuario cambia de un producto a otro
+    setIsLoading(true);
+    setError(false);
+    
+    ProductService.getProductById(productId)
+      .then(response => {
+        setProduct(response.data); // Guarda el producto del backend
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Error al cargar el producto:", err);
+        setError(true); // Activa el estado de error
+        setIsLoading(false);
+      });
+  }, [productId]); // Se ejecuta cada vez que el 'productId' de la URL cambia
+
+  // --> 6. NUEVA FUNCIÓN para manejar el envío de reseñas
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      // Llama al servicio con el ID del producto y los datos de la reseña
+      const response = await ProductService.addReviewToProduct(productId, reviewData);
+      
+      // ¡Éxito!
+      const newReview = response.data; // La reseña nueva (con su ID)
+      
+      // Actualiza el estado del producto para mostrar la nueva reseña AL INSTANTE
+      setProduct(CurrentProduct => ({
+        ...CurrentProduct,
+        reviews: [...CurrentProduct.reviews, newReview] // Añade la nueva reseña al array
+      }));
+
+    } catch (err) {
+      console.error("Error al enviar la reseña:", err);
+      alert("Hubo un error al enviar tu reseña. Inténtalo de nuevo.");
+    }
+  };
+
+  // --> 7. MOSTRAR ESTADO DE CARGA
+  if (isLoading) {
     return (
       <>
         <Header />
         <div className="product-not-found">
-          <h2>Producto no encontrado</h2>
-          <p>Lo sentimos, el producto que buscas no existe.</p>
+          <h2>Cargando producto...</h2>
         </div>
       </>
     );
   }
 
-  // Función para formatear precio a CLP
-  const formatPriceCLP = (value) => {
-    if (!value) return 'CLP 0';
-    // Eliminar puntos de miles y cualquier símbolo
-    const cleaned = String(value).replace(/\./g, '').replace(/[^0-9]/g, '');
-    const number = Number(cleaned) || 0;
-    return number.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
-  };
+  // --> 8. MOSTRAR ERROR (Tu lógica de "No encontrado" ahora usa el estado 'error')
+  if (error || !product) {
+    return (
+      <>
+        <Header />
+        <div className="product-not-found">
+          <h2>Producto no encontrado</h2>
+          <p>Lo sentimos, el producto que buscas no existe o no se pudo cargar.</p>
+        </div>
+      </>
+    );
+  }
 
-  // Precio numérico para cálculos (sin símbolos)
-  const numericPrice = Number(String(product.price).replace(/\./g, '').replace(/[^0-9]/g, '')) || 0;
+  // --> 9. AJUSTES A LA LÓGICA DE PRECIO
+  // 'product.price' ahora es un NÚMERO (ej: 29990), tu lógica anterior se simplifica
+  const numericPrice = product.price; // ¡Mucho más simple!
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
     const existing = cart.find(item => item.id === product.id);
 
     if (existing) {
@@ -48,8 +96,8 @@ const ProductDetailPage = () => {
       cart.push({
         id: product.id,
         name: product.name,
-        image: product.image,
-        price: numericPrice, // Guardamos como número entero en CLP
+        image: product.imageUrl, // --> 10. CAMBIO: usa imageUrl
+        price: numericPrice, 
         quantity: 1,
       });
     }
@@ -59,7 +107,7 @@ const ProductDetailPage = () => {
     alert(`${product.name} se añadió al carrito 🛒`);
   };
 
-  // Puntos LevelUp
+  // Esta lógica ahora funciona perfecto con 'numericPrice'
   const levelUpPoints = Math.floor(numericPrice / 1000) * 10;
 
   return (
@@ -68,7 +116,8 @@ const ProductDetailPage = () => {
       <main className="product-detail-container">
         <div className="product-main-info">
           <div className="product-image-gallery">
-            <img src={product.image} alt={product.name} className="main-product-image" />
+            {/* --> 11. CAMBIO: usa imageUrl */}
+            <img src={product.imageUrl} alt={product.name} className="main-product-image" />
           </div>
 
           <div className="product-details">
@@ -81,10 +130,11 @@ const ProductDetailPage = () => {
               <p><strong>Distribuidor:</strong> {product.distributor}</p>
             </div>
 
-            {/* Precio formateado */}
-            <p className="product-detail-price">{formatPriceCLP(product.price)}</p>
+            {/* --> 12. CAMBIO: Formato de precio simplificado */}
+            <p className="product-detail-price">
+              {numericPrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
+            </p>
 
-            {/* Botón Añadir al Carrito */}
             <Button variant="primary" className="add-to-cart-btn" onClick={handleAddToCart}>
               Añadir al Carrito
             </Button>
@@ -99,7 +149,11 @@ const ProductDetailPage = () => {
           </div>
         </div>
 
-        <ReviewsSection product={product} />
+        {/* --> 13. CAMBIO: Pasa la nueva función al componente de reseñas */}
+        <ReviewsSection 
+          product={product} 
+          onSubmitReview={handleReviewSubmit} 
+        />
       </main>
     </div>
   );
