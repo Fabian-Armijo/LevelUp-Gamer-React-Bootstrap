@@ -20,21 +20,17 @@ const NavigationMenu = () => {
     }
   };
 
-  // ✅ Función para actualizar el contador leyendo desde localStorage
   const updateCartCount = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(totalItems);
   };
 
-  // ✅ Al montar el componente, cargamos y escuchamos cambios
   useEffect(() => {
     updateCartCount();
 
-    // Escuchar cambios en el localStorage (por ejemplo, cuando agregas un producto)
     window.addEventListener('storage', updateCartCount);
 
-    // También escuchar eventos personalizados que emitiremos desde otras partes
     window.addEventListener('cartUpdated', updateCartCount);
 
     return () => {
@@ -43,14 +39,13 @@ const NavigationMenu = () => {
     };
   }, []);
 
-  // ✅ Nueva función: permite hacer scroll incluso si estás fuera del Home
   const handleScrollLink = (sectionId) => {
     if (window.location.pathname !== '/') {
-      navigate('/'); // volvemos al inicio
+      navigate('/');
       setTimeout(() => {
         const event = new CustomEvent('scrollToSection', { detail: sectionId });
         window.dispatchEvent(event);
-      }, 100); // pequeño retraso para que la Home se monte
+      }, 100); 
     } else {
       const event = new CustomEvent('scrollToSection', { detail: sectionId });
       window.dispatchEvent(event);
@@ -80,7 +75,6 @@ const NavigationMenu = () => {
         <button onClick={() => handleScrollLink('acerca-de')}>Acerca de</button>
         <button onClick={() => handleScrollLink('contacto')}>Contacto</button>
 
-        {/* ✅ Ícono del carrito con contador */}
         <RouterLink to="/carrito" className="cart-link" onClick={handleLinkClick}>
           🛒
           {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
