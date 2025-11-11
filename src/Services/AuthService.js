@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// La URL base de tu controlador de autenticación en Spring Boot
 const BASE_URL = 'http://localhost:8081/api/auth';
 
 class AuthService {

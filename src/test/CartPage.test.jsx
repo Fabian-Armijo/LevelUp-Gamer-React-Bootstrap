@@ -4,20 +4,17 @@ import CartPage from '../Components/pages/CartPage';
 import '@testing-library/jest-dom';
 
 beforeAll(() => {
-  window.alert = jest.fn(); // Evita el "not implemented"
+  window.alert = jest.fn();
 });
 
-// MOCK de react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
 
-// MOCK de Header para no renderizar cosas externas
 jest.mock('../Components/organisms/Header/Header', () => () => <div>Header Mock</div>);
 
-// MOCK de localStorage
 const localStorageMock = (() => {
   let store = {};
   return {
@@ -35,7 +32,6 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// Datos de prueba
 const mockCart = [
   {
     id: 1,
@@ -71,7 +67,7 @@ describe('CartPage', () => {
 
   test('muestra el total correctamente', () => {
     render(<CartPage />);
-    const total = 29990 * 2 + 549990 * 1; // 609970
+    const total = 29990 * 2 + 549990 * 1;
     expect(screen.getByText(/Total:/)).toHaveTextContent(
       new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(total)
     );
@@ -82,11 +78,9 @@ describe('CartPage', () => {
     const increaseButtons = screen.getAllByText('+');
     const decreaseButtons = screen.getAllByText('-');
 
-    // Aumentar cantidad del primer producto
     fireEvent.click(increaseButtons[0]);
     expect(screen.getByText('3')).toBeInTheDocument();
 
-    // Disminuir cantidad del primer producto
     fireEvent.click(decreaseButtons[0]);
     expect(screen.getByText('2')).toBeInTheDocument();
   });
