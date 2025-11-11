@@ -1,22 +1,19 @@
-// src/pages/RegistrationPage.test.jsx
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import RegistrationPage from './RegistrationPage';
-import RegistrationForm from '../organisms/RegistrationForm/RegistrationForm';
+import RegistrationPage from '../Components/pages/RegistrationPage';
+import RegistrationForm from '../Components/organisms/RegistrationForm/RegistrationForm';
 
 beforeAll(() => {
-  window.alert = jest.fn(); // Evita el "not implemented"
+  window.alert = jest.fn();
 });
 
-// Mock de useNavigate de react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
-  Link: ({ children, to }) => <a href={to}>{children}</a>, // mock del Link
+  Link: ({ children, to }) => <a href={to}>{children}</a>, 
 }));
 
-// Mock del RegistrationForm
 jest.mock('../organisms/RegistrationForm/RegistrationForm', () => {
   return jest.fn(({ onRegistrationSuccess }) => (
     <button onClick={onRegistrationSuccess}>Mock Register</button>

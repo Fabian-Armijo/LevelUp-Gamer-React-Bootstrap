@@ -1,54 +1,45 @@
-// src/Components/pages/ProductDetailPage/ProductDetailPage.jsx
-import React, { useState, useEffect } from 'react'; // --> 1. Importa useState y useEffect
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../../organisms/Header/Header';
-// import { allProducts } from '../../../data/products'; // --> 2. ELIMINA la data local
 import ProductService from '../../../Services/ProductService'; 
 import ReviewsSection from '../../organisms/ReviewsSection/ReviewsSection';
 import { Button } from 'react-bootstrap';
 import './ProductDetailPage.css';
 
-const isDuocUser = true; // Asumimos que esto sigue bien
+const isDuocUser = true;
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
   
-  // --> 4. CREA ESTADOS para el producto, la carga y el error
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // --> 5. AGREGA useEffect para cargar los datos del backend
   useEffect(() => {
-    // Resetea los estados por si el usuario cambia de un producto a otro
     setIsLoading(true);
     setError(false);
     
     ProductService.getProductById(productId)
       .then(response => {
-        setProduct(response.data); // Guarda el producto del backend
+        setProduct(response.data);
         setIsLoading(false);
       })
       .catch(err => {
         console.error("Error al cargar el producto:", err);
-        setError(true); // Activa el estado de error
+        setError(true); 
         setIsLoading(false);
       });
-  }, [productId]); // Se ejecuta cada vez que el 'productId' de la URL cambia
+  }, [productId]);
 
-  // --> 6. NUEVA FUNCIÓN para manejar el envío de reseñas
   const handleReviewSubmit = async (reviewData) => {
     try {
-      // Llama al servicio con el ID del producto y los datos de la reseña
       const response = await ProductService.addReviewToProduct(productId, reviewData);
       
-      // ¡Éxito!
-      const newReview = response.data; // La reseña nueva (con su ID)
+      const newReview = response.data; 
       
-      // Actualiza el estado del producto para mostrar la nueva reseña AL INSTANTE
       setProduct(CurrentProduct => ({
         ...CurrentProduct,
-        reviews: [...CurrentProduct.reviews, newReview] // Añade la nueva reseña al array
+        reviews: [...CurrentProduct.reviews, newReview] 
       }));
 
     } catch (err) {
@@ -57,7 +48,6 @@ const ProductDetailPage = () => {
     }
   };
 
-  // --> 7. MOSTRAR ESTADO DE CARGA
   if (isLoading) {
     return (
       <>
@@ -69,7 +59,6 @@ const ProductDetailPage = () => {
     );
   }
 
-  // --> 8. MOSTRAR ERROR (Tu lógica de "No encontrado" ahora usa el estado 'error')
   if (error || !product) {
     return (
       <>
@@ -82,9 +71,7 @@ const ProductDetailPage = () => {
     );
   }
 
-  // --> 9. AJUSTES A LA LÓGICA DE PRECIO
-  // 'product.price' ahora es un NÚMERO (ej: 29990), tu lógica anterior se simplifica
-  const numericPrice = product.price; // ¡Mucho más simple!
+  const numericPrice = product.price;
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -96,7 +83,7 @@ const ProductDetailPage = () => {
       cart.push({
         id: product.id,
         name: product.name,
-        image: product.imageUrl, // --> 10. CAMBIO: usa imageUrl
+        image: product.imageUrl,
         price: numericPrice, 
         quantity: 1,
       });
@@ -107,7 +94,6 @@ const ProductDetailPage = () => {
     alert(`${product.name} se añadió al carrito 🛒`);
   };
 
-  // Esta lógica ahora funciona perfecto con 'numericPrice'
   const levelUpPoints = Math.floor(numericPrice / 1000) * 10;
 
   return (
@@ -116,7 +102,6 @@ const ProductDetailPage = () => {
       <main className="product-detail-container">
         <div className="product-main-info">
           <div className="product-image-gallery">
-            {/* --> 11. CAMBIO: usa imageUrl */}
             <img src={product.imageUrl} alt={product.name} className="main-product-image" />
           </div>
 
@@ -130,7 +115,6 @@ const ProductDetailPage = () => {
               <p><strong>Distribuidor:</strong> {product.distributor}</p>
             </div>
 
-            {/* --> 12. CAMBIO: Formato de precio simplificado */}
             <p className="product-detail-price">
               {numericPrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
             </p>
@@ -149,7 +133,6 @@ const ProductDetailPage = () => {
           </div>
         </div>
 
-        {/* --> 13. CAMBIO: Pasa la nueva función al componente de reseñas */}
         <ReviewsSection 
           product={product} 
           onSubmitReview={handleReviewSubmit} 

@@ -1,12 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import LoginPage from './LoginPage';
+import LoginPage from '../Components/pages/LoginPage';
 
 beforeAll(() => {
-  window.alert = jest.fn(); // Evita el "not implemented"
+  window.alert = jest.fn(); 
 });
-// Mock del useNavigate de react-router-dom
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -14,7 +13,6 @@ jest.mock('react-router-dom', () => ({
   Link: ({ to, children }) => <a href={to}>{children}</a>,
 }));
 
-// Mock del LoginForm (solo simula que llama a onLoginSuccess)
 jest.mock('../organisms/LoginForm/LoginForm', () => {
   return ({ onLoginSuccess }) => (
     <div data-testid="mock-login-form">

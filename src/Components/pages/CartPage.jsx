@@ -1,4 +1,3 @@
-// src/Components/pages/CartPage/CartPage.jsx
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -9,13 +8,11 @@ const CartPage = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
-  // Cargar carrito desde localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
     setCart(storedCart);
   }, []);
 
-  // Guardar cambios en localStorage y actualizar contador
   const updateCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -47,7 +44,6 @@ const CartPage = () => {
     updateCart(updated);
   };
 
-  // Vaciar todo el carrito
   const handleEmptyCart = () => {
     if (cart.length === 0) return;
     const confirmEmpty = window.confirm('¿Estás seguro que quieres vaciar el carrito?');
@@ -56,7 +52,6 @@ const CartPage = () => {
     }
   };
 
-  // Función para limpiar y convertir precio a número entero
   const parsePrice = (value) => {
     if (typeof value === 'number') return value;
     if (!value) return 0;
@@ -64,7 +59,6 @@ const CartPage = () => {
     return Number(cleaned) || 0;
   };
 
-  // Total del carrito
   const total = cart.reduce((acc, item) => {
     return acc + parsePrice(item.price) * (Number(item.quantity) || 0);
   }, 0);

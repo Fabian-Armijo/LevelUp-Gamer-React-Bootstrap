@@ -1,4 +1,3 @@
-// src/pages/RegistrationPage.jsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RegistrationForm from '../organisms/RegistrationForm/RegistrationForm';

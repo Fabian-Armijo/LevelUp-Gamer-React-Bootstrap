@@ -8,13 +8,12 @@ import EventsMapSection from '../organisms/EventsMapSection/EventsMapSection';
 import AboutUsSection from '../organisms/AboutUsSection/AboutUsSection';
 
 const HomePage = () => {
-  // ✅ Escucha el evento personalizado y hace scroll a la sección correspondiente
   useEffect(() => {
     const handleScrollToSection = (e) => {
       const section = e.detail;
       scroller.scrollTo(section, {
         smooth: true,
-        offset: -80, // ajusta según el alto del header
+        offset: -80,
         duration: 500,
       });
     };
