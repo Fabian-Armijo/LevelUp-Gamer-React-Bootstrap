@@ -3,6 +3,7 @@ import FormField from '../../molecules/FormField/FormField';
 import Button from '../../atoms/Button/Button';
 import './LoginForm.css';
 import AuthService from '../../../Services/AuthService';
+import { useAuth } from '../../../context/AuthContext'; // --> 1. IMPORTA EL HOOK 'useAuth'
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,9 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [serverError, setServerError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // --> 2. OBTÉN LA FUNCIÓN 'login' DEL CONTEXTO
+  const { login } = useAuth();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -25,6 +29,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   };
 
   const validateForm = () => {
+    // ... (Tu validación está perfecta, no cambia)
     let formIsValid = true;
     const newErrors = { username: '', password: '' };
 
@@ -60,8 +65,15 @@ const LoginForm = ({ onLoginSuccess }) => {
       const response = await AuthService.login(credentials);
       
       const token = response.data.token;
-      localStorage.setItem('token', token);
       
+      // --> 3. ¡AQUÍ ESTÁ EL CAMBIO!
+      // En lugar de guardar el token manualmente...
+      // localStorage.setItem('token', token); <-- (BORRAMOS ESTA LÍNEA)
+
+      // ...llamamos a la función 'login' del contexto.
+      login(token);
+      
+      // onLoginSuccess (que asumo te redirige) sigue siendo necesaria.
       onLoginSuccess();
 
     } catch (err) {
@@ -80,6 +92,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     <div className="form-container">
       <h2>Iniciar Sesión</h2>
       <form onSubmit={handleSubmit} noValidate>
+        {/* ... (Tu JSX está perfecto, no necesita ningún cambio) ... */}
         <FormField
           label="Nombre de Usuario"
           type="text"
