@@ -1,27 +1,27 @@
-import axios from 'axios';
+import api from './api';
 
 const BASE_URL = 'http://localhost:8081/api/products';
 
 class ProductService {
 
     getAllProducts() {
-        return axios.get(BASE_URL);
+        return api.get(BASE_URL);
     }
 
     getProductById(productId) {
-        return axios.get(`${BASE_URL}/${productId}`);
+        return api.get(`${BASE_URL}/${productId}`);
     }
 
     createProduct(productData) {
-        return axios.post(BASE_URL, productData);
+        return api.post(BASE_URL, productData);
     }
 
     updateProduct(productId, productData) {
-        return axios.put(`${BASE_URL}/${productId}`, productData);
+        return api.put(`${BASE_URL}/${productId}`, productData);
     }
 
     deleteProduct(productId) {
-        return axios.delete(`${BASE_URL}/${productId}`);
+        return api.delete(`${BASE_URL}/${productId}`);
     }
 
     
@@ -32,7 +32,7 @@ class ProductService {
      * @returns 
      */
     addReviewToProduct(productId, reviewData) {
-        return axios.post(`${BASE_URL}/${productId}/reviews`, reviewData);
+        return api.post(`${BASE_URL}/${productId}/reviews`, reviewData);
     }
 
 }

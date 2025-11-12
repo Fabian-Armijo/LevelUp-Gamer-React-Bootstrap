@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 
 const BASE_URL = 'http://localhost:8081/api/auth';
 
@@ -9,7 +9,7 @@ class AuthService {
      * @param {object} userData - El objeto con (username, email, password, dateOfBirth)
      */
     register(userData) {
-        return axios.post(`${BASE_URL}/register`, userData);
+        return api.post(`${BASE_URL}/register`, userData);
     }
 
     /**
@@ -17,7 +17,7 @@ class AuthService {
      * @param {object} credentials - El objeto con (username, password)
      */
     login(credentials) {
-      return axios.post(`${BASE_URL}/login`, credentials);
+      return api.post(`${BASE_URL}/login`, credentials);
     }
 
 }
