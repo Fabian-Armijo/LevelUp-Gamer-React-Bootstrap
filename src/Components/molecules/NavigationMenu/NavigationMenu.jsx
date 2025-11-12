@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import CartService from '../../../Services/CartService';
 import './NavigationMenu.css';
 
 const NavigationMenu = () => {
@@ -20,24 +21,39 @@ const NavigationMenu = () => {
     }
   };
 
-  const updateCartCount = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+const updateCartCount = async () => {
+  const token = localStorage.getItem('token');
+ 
+  if (!token) {
+  // Si no hay token, el carrito es 0
+  setCartCount(0);
+  return;
+  }
+
+  // Si hay token, pregunta al backend
+  try {
+    const response = await CartService.getCart();
+    // Asumiendo que el backend devuelve { items: [...] }
+    const totalItems = response.data.items.reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(totalItems);
+  } catch (error) {
+    console.warn("No se pudo cargar el contador del carrito (quizás el token expiró)");
+    setCartCount(0);
+  }
+ };
+
+useEffect(() => {
+  updateCartCount(); // Llama al cargar la página
+
+  // Los listeners siguen siendo útiles para actualizar en tiempo real
+  window.addEventListener('storage', updateCartCount);
+  window.addEventListener('cartUpdated', updateCartCount);
+
+  return () => {
+    window.removeEventListener('storage', updateCartCount);
+    window.removeEventListener('cartUpdated', updateCartCount);
   };
-
-  useEffect(() => {
-    updateCartCount();
-
-    window.addEventListener('storage', updateCartCount);
-
-    window.addEventListener('cartUpdated', updateCartCount);
-
-    return () => {
-      window.removeEventListener('storage', updateCartCount);
-      window.removeEventListener('cartUpdated', updateCartCount);
-    };
-  }, []);
+}, []);
 
   const handleScrollLink = (sectionId) => {
     if (window.location.pathname !== '/') {

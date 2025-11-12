@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../organisms/Header/Header';
 import ProductService from '../../../Services/ProductService'; 
+import CartService from '../../../Services/CartService';
 import ReviewsSection from '../../organisms/ReviewsSection/ReviewsSection';
 import { Button } from 'react-bootstrap';
 import './ProductDetailPage.css';
@@ -10,7 +11,7 @@ const isDuocUser = true;
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
-  
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -71,28 +72,31 @@ const ProductDetailPage = () => {
     );
   }
 
+
   const numericPrice = product.price;
 
-  const handleAddToCart = () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const existing = cart.find(item => item.id === product.id);
+  const handleAddToCart = async () => { 
+    // 1. Verifica si el usuario está logueado
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Debes iniciar sesión para añadir productos al carrito.");
+      navigate('/login');
+      return;
+  }
 
-    if (existing) {
-      existing.quantity = Number(existing.quantity || 0) + 1;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        image: product.imageUrl,
-        price: numericPrice, 
-        quantity: 1,
-      });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    window.dispatchEvent(new Event('cartUpdated'));
+ // 2. Llama al servicio
+  try {
+    await CartService.addItem({ productId: product.id, quantity: 1 });
     alert(`${product.name} se añadió al carrito 🛒`);
-  };
+  
+  // 3. Dispara el evento para que el Header se actualice
+    window.dispatchEvent(new Event('cartUpdated')); 
+ 
+  } catch (error) {
+    console.error("Error al añadir al carrito:", error);
+    alert("Hubo un error al añadir el producto.");
+  }
+};
 
   const levelUpPoints = Math.floor(numericPrice / 1000) * 10;
 

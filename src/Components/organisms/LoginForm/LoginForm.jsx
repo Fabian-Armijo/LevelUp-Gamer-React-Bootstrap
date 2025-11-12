@@ -6,6 +6,7 @@ import AuthService from '../../../Services/AuthService';
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
+    username: '',
     password: '',
   });
 
