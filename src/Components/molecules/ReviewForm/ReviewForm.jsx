@@ -14,11 +14,14 @@ const ReviewForm = ({ onAddReview }) => {
       return;
     }
     
+    // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
+    // Simplemente pasamos la calificación y el comentario.
+    // El backend se encargará de añadir el autor desde el token.
     onAddReview({
       rating,
       comment,
-      author: 'Usuario Anónimo'
     });
+    // --- FIN DEL CAMBIO ---
 
     // Resetea el formulario
     setRating(0);
