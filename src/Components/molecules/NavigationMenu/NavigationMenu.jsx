@@ -4,34 +4,45 @@ import CartService from '../../../Services/CartService';
 import './NavigationMenu.css';
 import { useAuth } from '../../../context/AuthContext';
 import { Modal, Button } from 'react-bootstrap';
-import ProfileService from '../../../Services/ProfileService'; 
+import ProfileService from '../../../services/ProfileService'; 
 
+/**
+ * Componente Helper para mostrar el ícono de Nivel
+ */
+const LevelFlair = ({ level }) => {
+  if (!level || level < 2) return null; 
+  let flair = '';
+  let title = '';
+  switch (level) {
+    case 2: flair = '🥈'; title = 'Nivel 2: Plata'; break;
+    case 3: flair = '🥇'; title = 'Nivel 3: Oro'; break;
+    case 4: flair = '👑'; title = 'Nivel 4: Maestro'; break;
+    default: return null;
+  }
+  return <span className="level-flair" title={title}>{flair}</span>;
+};
+
+
+// --- Componente Principal ---
 const NavigationMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [profilePicUrl, setProfilePicUrl] = useState(null);
 
-  // ... (Tus funciones handleLinkClick, handleConfirmLogout, getModalMessage, etc. no cambian) ...
-
-  const handleLinkClick = () => {
-    setIsOpen(false);
-  };
-
+  // Funciones del Modal
+  const handleLinkClick = () => { setIsOpen(false); };
   const handleConfirmLogout = () => {
     handleLinkClick();
     logout();
     navigate('/');
     setShowLogoutModal(false);
   };
-
   const handleLogoutClick = () => {
     setIsOpen(false);
     setShowLogoutModal(true);
   };
-
   const getModalMessage = () => {
     if (cartCount > 0) {
       return `Tienes ${cartCount} producto(s) en tu carrito. ¿Estás seguro de que quieres cerrar sesión?`;
@@ -39,6 +50,7 @@ const NavigationMenu = () => {
     return '¿Estás seguro de que quieres cerrar sesión?';
   };
 
+  // Función para actualizar el contador del carrito
   const updateCartCount = async () => {
     if (!isAuthenticated) {
       setCartCount(0);
@@ -54,32 +66,18 @@ const NavigationMenu = () => {
     }
   };
 
+  // useEffect para cargar el carrito
   useEffect(() => {
-    const loadHeaderData = async () => {
-      if (isAuthenticated) {
-        try {
-          const profilePromise = ProfileService.getMyProfile();
-          updateCartCount(); // Llama a tu función del carrito
-          const profileResponse = await profilePromise;
-          setProfilePicUrl(profileResponse.data.profilePictureUrl);
-        } catch (error) {
-          console.error("Error al cargar datos del header:", error);
-          setProfilePicUrl(null);
-        }
-      } else {
-        setCartCount(0);
-        setProfilePicUrl(null);
-      }
-    };
-    loadHeaderData();
-    window.addEventListener('storage', loadHeaderData);
+    updateCartCount(); 
+    window.addEventListener('storage', updateCartCount);
     window.addEventListener('cartUpdated', updateCartCount);
     return () => {
-      window.removeEventListener('storage', loadHeaderData);
+      window.removeEventListener('storage', updateCartCount);
       window.removeEventListener('cartUpdated', updateCartCount);
     };
   }, [isAuthenticated]);
 
+  // Lógica de Scroll
   const handleScrollLink = (sectionId) => {
     if (window.location.pathname !== '/') {
       navigate('/');
@@ -103,7 +101,7 @@ const NavigationMenu = () => {
 
         <div className={`nav-links ${isOpen ? 'show' : ''}`}>
           
-          {/* --- Grupo de Enlaces de Navegación (Izquierda) --- */}
+          {/* --- Links de Navegación (Izquierda) --- */}
           <button onClick={() => handleScrollLink('inicio')}>Inicio</button>
           <button onClick={() => handleScrollLink('catalogo')}>Catálogo</button>
           <button onClick={() => handleScrollLink('blog')}>Blog</button>
@@ -111,31 +109,37 @@ const NavigationMenu = () => {
           <button onClick={() => handleScrollLink('acerca-de')}>Acerca de</button>
           <button onClick={() => handleScrollLink('contacto')}>Contacto</button>
 
-          {/* --- Grupo de Acciones (Derecha) --- */}
+          {/* --- Acciones (Derecha) --- */}
           <div className="nav-actions-group">
             {isAuthenticated ? (
-              // --- Logueado (Orden Corregido: Carrito -> Perfil -> Logout) ---
+              // --- Logueado ---
               <>
-                {/* 1. Carrito */}
                 <RouterLink to="/carrito" className="cart-link" onClick={handleLinkClick} title="Carrito">
                   🛒
                   {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                 </RouterLink>
 
-                {/* 2. Perfil (La foto) */}
+                {/* --- ¡LA ESTRUCTURA JSX CORRECTA! --- */}
+                {/* 1. El Link (Padre) tiene position: relative */}
                 <RouterLink to="/perfil" className="nav-profile-link" onClick={handleLinkClick} title="Mi Perfil">
-                  {profilePicUrl ? (
+                  
+                  {/* 2. La Foto (Hijo) */}
+                  {user && user.profilePictureUrl ? (
                     <img
-                      src={profilePicUrl}
+                      src={user.profilePictureUrl}
                       alt="Perfil"
                       className="header-profile-pic"
                     />
                   ) : (
                     <span className="profile-icon">👤</span> 
                   )}
+                  
+                  {/* 3. La Corona (Hijo) tiene position: absolute */}
+                  {user && user.userRole === "ROLE_DUOC" && <LevelFlair level={user.userLevel} />}
+
                 </RouterLink>
+                {/* --- FIN DE LA ESTRUCTURA --- */}
                 
-                {/* 3. Cerrar Sesión */}
                 <button onClick={handleLogoutClick} className="nav-button" title="Cerrar Sesión">
                   Cerrar Sesión
                 </button>
@@ -159,7 +163,7 @@ const NavigationMenu = () => {
         </div>
       </nav>
 
-      {/* Modal de Logout (sin cambios) */}
+      {/* --- Modal (sin cambios) --- */}
       <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Cierre de Sesión</Modal.Title>

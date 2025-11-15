@@ -53,12 +53,55 @@
   border-left: 3px solid var(--color-primary-accent);
 }
 
+/* --- SECCIÓN DE PRECIO ACTUALIZADA --- */
+
+/* Contenedor para los precios */
+.product-detail-price-container {
+  margin: 20px 0;
+}
+
+/* Precio normal (para usuarios no-Duoc) */
 .product-detail-price {
   font-family: var(--font-header);
   font-size: 2rem;
   color: var(--color-secondary-accent);
-  margin: 20px 0;
 }
+
+/* Precio original (tachado) */
+.product-detail-price-original {
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+  margin-bottom: 5px;
+}
+
+/* Precio especial Duoc (color primario) */
+.product-detail-price-duoc {
+  font-family: var(--font-header);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-primary-accent); /* Color de acento para Duoc */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* La "etiqueta" 20% OFF (color secundario) */
+.discount-badge {
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-header);
+  color: var(--color-text-primary);
+  background-color: var(--color-secondary-accent); /* Color llamativo */
+  padding: 4px 8px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+/* --- FIN DE LA SECCIÓN DE PRECIO --- */
+
 
 .add-to-cart-btn {
   background-color: var(--color-primary-accent);

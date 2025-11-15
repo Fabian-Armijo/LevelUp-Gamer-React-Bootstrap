@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import Header from '../../organisms/Header/Header';
 import FormField from '../../molecules/FormField/FormField';
 import Button from '../../atoms/Button/Button';
+import { ProgressBar } from 'react-bootstrap'; // <-- 1. IMPORTA LA BARRA DE PROGRESO
 import './ProfilePage.css';
-import ProfileService from '../../../Services/ProfileService';
+import ProfileService from '../../../services/ProfileService';
 
 const ProfilePage = () => {
-    // Estado para los datos del usuario (texto)
+    // 2. Estado inicial (ya incluye los nuevos campos)
     const [userInfo, setUserInfo] = useState({
         username: '',
         email: '',
@@ -15,38 +16,37 @@ const ProfilePage = () => {
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
+        userRole: '',
+        pointsBalance: 0,
+        userLevel: 1,
     });
 
-    // Estado para el modo edición
     const [isEditing, setIsEditing] = useState(false);
-    
-    // Estado para errores de validación del frontend
     const [errors, setErrors] = useState({});
-    
-    // Estado para la carga (global para la página)
     const [isLoading, setIsLoading] = useState(true);
-    
-    // Estado para los mensajes de éxito/error del servidor
     const [serverMessage, setServerMessage] = useState({ type: '', text: '' });
-
-    // Estado para el archivo de imagen seleccionado
     const [selectedFile, setSelectedFile] = useState(null);
-    
-    // Referencia al input de archivo para poder resetearlo
     const fileInputRef = useRef(null);
 
-    // --- Carga de Datos Inicial ---
+    // 3. 'useEffect' que carga todos los datos del perfil
     useEffect(() => {
         setIsLoading(true);
         ProfileService.getMyProfile()
             .then(response => {
-                const { username, email, receiveNotifications, profilePictureUrl } = response.data;
+                const {
+                    username, email, receiveNotifications, profilePictureUrl,
+                    userRole, pointsBalance, userLevel // Carga los datos de Duoc
+                } = response.data;
+                
                 setUserInfo(prevInfo => ({
                     ...prevInfo,
                     username,
                     email,
                     receiveNotifications,
                     profilePictureUrl: profilePictureUrl || '',
+                    userRole: userRole || 'ROLE_USER',
+                    pointsBalance: pointsBalance || 0,
+                    userLevel: userLevel || 1,
                 }));
             })
             .catch(error => {
@@ -56,9 +56,10 @@ const ProfilePage = () => {
             .finally(() => {
                 setIsLoading(false);
             });
-    }, []); // Se ejecuta solo una vez al cargar la página
+    }, []);
 
-    // Manejador para los campos de texto y checkboxes
+    // ... (Tus funciones 'handleChange', 'handleFileChange', 'validateForm', 'handlePictureUpload', y 'handleSubmit' no necesitan cambios)
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setUserInfo(prevInfo => ({
@@ -67,16 +68,12 @@ const ProfilePage = () => {
         }));
     };
 
-    // Manejador para el campo de archivo
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setSelectedFile(e.target.files[0]);
         }
     };
 
-    // --- Lógica de Envío de Formularios ---
-
-    // 1. Validar el formulario de texto
     const validateForm = () => {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -92,7 +89,6 @@ const ProfilePage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // 2. Manejador para SUBIR LA FOTO
     const handlePictureUpload = async () => {
         if (!selectedFile) {
             setServerMessage({ type: 'error', text: 'Por favor, selecciona un archivo primero.' });
@@ -105,7 +101,7 @@ const ProfilePage = () => {
             setUserInfo(prev => ({ ...prev, profilePictureUrl: response.data.profilePictureUrl }));
             setServerMessage({ type: 'success', text: '¡Foto de perfil actualizada!' });
             setSelectedFile(null);
-            if (fileInputRef.current) fileInputRef.current.value = null; // Resetea el input
+            if (fileInputRef.current) fileInputRef.current.value = null; 
         } catch (error) {
             console.error('Error al subir la foto:', error);
             setServerMessage({ type: 'error', text: 'Error al subir la foto (quizás es muy grande o no es una imagen).' });
@@ -113,8 +109,7 @@ const ProfilePage = () => {
             setIsLoading(false);
         }
     };
-
-    // 3. Manejador para GUARDAR LOS CAMBIOS (username, email, clave)
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setServerMessage({ type: '', text: '' });
@@ -124,16 +119,13 @@ const ProfilePage = () => {
         const tasks = [];
         let passwordChangeRequested = userInfo.newPassword && userInfo.currentPassword;
 
-        // Tarea 1: Actualizar datos del perfil
         const profileData = {
             username: userInfo.username,
             email: userInfo.email,
             receiveNotifications: userInfo.receiveNotifications,
-            // (La URL ya no se envía desde aquí)
         };
         tasks.push(ProfileService.updateMyProfile(profileData));
 
-        // Tarea 2: Cambiar contraseña (si se pidió)
         if (passwordChangeRequested) {
             tasks.push(ProfileService.changePassword({
                 oldPassword: userInfo.currentPassword,
@@ -154,6 +146,43 @@ const ProfilePage = () => {
             setIsLoading(false);
         }
     };
+
+
+    // --- 4. LÓGICA DE LA BARRA DE PROGRESO ---
+    const user = userInfo; // Alias para legibilidad
+    const currentLevel = user.userLevel;
+    const currentPoints = user.pointsBalance;
+
+    // Define los puntos necesarios para cada nivel
+    const LEVEL_GOALS = { 1: 50000, 2: 100000, 3: 150000, 4: 150000 };
+    // Define los puntos iniciales de cada nivel
+    const LEVEL_START_POINTS = { 1: 0, 2: 50000, 3: 100000, 4: 150000 };
+
+    let progressPercent = 0;
+    let pointsForNextLevel = 0;
+    let nextLevelGoalText = "";
+
+    if (currentLevel < 4) {
+      const startPoints = LEVEL_START_POINTS[currentLevel];
+      const goalPoints = LEVEL_GOALS[currentLevel];
+      
+      const pointsInCurrentLevel = currentPoints - startPoints;
+      const pointsNeededForLevel = goalPoints - startPoints;
+      
+      // Asegurarse de que el porcentaje no sea negativo o más de 100
+      const calculatedPercent = (pointsInCurrentLevel / pointsNeededForLevel) * 100;
+      progressPercent = Math.max(0, Math.min(100, calculatedPercent));
+      
+      pointsForNextLevel = goalPoints - currentPoints;
+      nextLevelGoalText = `${currentPoints.toLocaleString('es-CL')} / ${goalPoints.toLocaleString('es-CL')} Pts.`;
+    } else {
+      // Es Nivel 4 (máximo)
+      progressPercent = 100;
+      pointsForNextLevel = 0;
+      nextLevelGoalText = "¡Nivel Máximo Alcanzado!";
+    }
+    // --- FIN DE LA LÓGICA ---
+
 
     // --- Renderizado ---
 
@@ -183,12 +212,10 @@ const ProfilePage = () => {
                 {/* --- SECCIÓN DE FOTO DE PERFIL --- */}
                 {userInfo.profilePictureUrl && (
                     <div className="profile-picture-preview">
-                        {/* La key={userInfo.profilePictureUrl} fuerza a React a recargar la img */}
                         <img src={userInfo.profilePictureUrl} alt="Foto de perfil" key={userInfo.profilePictureUrl} />
                     </div>
                 )}
                 
-                {/* Mostramos la subida de archivos solo si estamos editando */}
                 {isEditing && (
                     <section className="profile-section">
                         <h2>Foto de Perfil</h2>
@@ -197,7 +224,7 @@ const ProfilePage = () => {
                             type="file"
                             name="profilePictureFile"
                             onChange={handleFileChange}
-                            accept="image/png, image/jpeg" // Acepta solo imágenes
+                            accept="image/png, image/jpeg"
                             ref={fileInputRef}
                         />
                         <Button
@@ -207,6 +234,43 @@ const ProfilePage = () => {
                         >
                             {isLoading ? 'Subiendo...' : 'Subir Foto'}
                         </Button>
+                    </section>
+                )}
+
+                {/* --- 5. ¡SECCIÓN DE RECOMPENSAS ACTUALIZADA! --- */}
+                {userInfo.userRole === 'ROLE_DUOC' && (
+                    <section className="profile-section rewards-section">
+                        <h2>Mis Recompensas Duoc</h2>
+                        <div className="profile-rewards-grid">
+                            <div className="reward-item">
+                                <span className="reward-label">Nivel</span>
+                                <span className="reward-value">Nivel {userInfo.userLevel} / 4</span>
+                            </div>
+                            <div className="reward-item">
+                                <span className="reward-label">Puntos</span>
+                                <span className="reward-value">{userInfo.pointsBalance.toLocaleString('es-CL')} Pts.</span>
+                            </div>
+                        </div>
+
+                        {/* --- BARRA DE PROGRESO --- */}
+                        <div className="progress-bar-container">
+                          {currentLevel < 4 ? (
+                            <>
+                              <p>Puntos para Nivel {currentLevel + 1}: <strong>{pointsForNextLevel.toLocaleString('es-CL')} Pts.</strong></p>
+                              <ProgressBar 
+                                now={progressPercent} 
+                                label={nextLevelGoalText}
+                                variant="info" // Color de la barra
+                                animated 
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <p>¡Felicidades! Has alcanzado el Nivel Máximo.</p>
+                              <ProgressBar now={100} label={nextLevelGoalText} variant="success" />
+                            </>
+                          )}
+                        </div>
                     </section>
                 )}
                 
@@ -282,7 +346,6 @@ const ProfilePage = () => {
                         </div>
                     </section>
                     
-                    {/* --- BOTONES DE ACCIÓN --- */}
                     <div className="profile-actions">
                         {isEditing ? (
                             <>
