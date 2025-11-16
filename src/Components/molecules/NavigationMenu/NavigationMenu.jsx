@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import CartService from '../../../Services/CartService';
+import CartService from '../../../services/CartService';
 import './NavigationMenu.css';
 import { useAuth } from '../../../context/AuthContext';
 import { Modal, Button } from 'react-bootstrap';

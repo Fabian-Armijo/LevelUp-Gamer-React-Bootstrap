@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '../../atoms/ProductCard/ProductCard';
 import './ProductCatalog.css';
-import ProductService from '../../../Services/ProductService';
+import ProductService from '../../../services/ProductService';
 
 const categories = [
   'Todos', 'Juegos de Mesa', 'Accesorios', 'Consolas', 'Computadores Gamers', 

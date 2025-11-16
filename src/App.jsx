@@ -7,7 +7,7 @@ import ProductDetailPage from './Components/pages/ProductDetailPage/ProductDetai
 import CartPage from './Components/pages/CartPage';
 import Footer from './Components/organisms/Footer/Footer';
 import ProfilePage from './Components/pages/ProfilePage/ProfilePage';
-
+import RewardsPage from './Components/pages/RewardsPage';
 // --- 1. IMPORTA EL CONTEXTO Y EL GUARDIA ---
 import { AuthProvider } from './context/AuthContext'; // Ajusta esta ruta
 import ProtectedRoute from './Components/utils/ProtectedRoute'; // Ajusta esta ruta
@@ -29,6 +29,8 @@ const AppLayout = () => {
         <Route path="/registro" element={<RegistrationPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:productId" element={<ProductDetailPage />} />
+        {/* --- 2. ¡AÑADE LA RUTA DE RECOMPENSAS! --- */}
+        <Route path="/recompensas" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
         
         {/* --- 3. RUTAS PROTEGIDAS (Requieren login) --- */}
         {/* Envolvemos las rutas privadas con el "Guardia" */}

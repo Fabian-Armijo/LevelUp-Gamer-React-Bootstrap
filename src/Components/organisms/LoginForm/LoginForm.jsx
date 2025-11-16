@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import FormField from '../../molecules/FormField/FormField';
 import Button from '../../atoms/Button/Button';
 import './LoginForm.css';
-import AuthService from '../../../Services/AuthService';
-import { useAuth } from '../../../context/AuthContext'; // --> 1. IMPORTA EL HOOK 'useAuth'
+import AuthService from '../../../services/AuthService';
+import { useAuth } from '../../../context/AuthContext'; 
 
 const LoginForm = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [serverError, setServerError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // --> 2. OBTÉN LA FUNCIÓN 'login' DEL CONTEXTO
+  // Se obtiene la función 'login' del contexto
   const { login } = useAuth();
 
   const handleChange = (e) => {
@@ -29,15 +29,13 @@ const LoginForm = ({ onLoginSuccess }) => {
   };
 
   const validateForm = () => {
-    // ... (Tu validación está perfecta, no cambia)
+    // ... (Tu validación está perfecta)
     let formIsValid = true;
     const newErrors = { username: '', password: '' };
-
     if (!formData.username) {
       newErrors.username = 'El nombre de usuario es obligatorio.';
       formIsValid = false;
     }
-
     if (!formData.password) {
       newErrors.password = 'La contraseña es obligatoria.';
       formIsValid = false;
@@ -46,6 +44,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     return formIsValid;
   };
 
+  // Esta función ya es 'async', lo cual es perfecto
   const handleSubmit = async (e) => { 
     e.preventDefault();
     setServerError(null);
@@ -62,22 +61,20 @@ const LoginForm = ({ onLoginSuccess }) => {
     };
 
     try {
+      // 1. Llama al backend para obtener el token
       const response = await AuthService.login(credentials);
-      
       const token = response.data.token;
       
-      // --> 3. ¡AQUÍ ESTÁ EL CAMBIO!
-      // En lugar de guardar el token manualmente...
-      // localStorage.setItem('token', token); <-- (BORRAMOS ESTA LÍNEA)
-
-      // ...llamamos a la función 'login' del contexto.
-      login(token);
+      // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
+      // 2. Llama a la función 'login' del contexto (que es asíncrona)
+      //    y ESPERA (await) a que termine de cargar el perfil.
+      await login(token);
       
-      // onLoginSuccess (que asumo te redirige) sigue siendo necesaria.
+      // 3. Ahora que el contexto SÍ tiene el 'user', redirige.
       onLoginSuccess();
 
     } catch (err) {
-      console.error(err);
+      console.error("Error en el proceso de login:", err); // Mensaje de error mejorado
       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
           setServerError("Nombre de usuario o contraseña incorrectos.");
       } else {
@@ -92,7 +89,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     <div className="form-container">
       <h2>Iniciar Sesión</h2>
       <form onSubmit={handleSubmit} noValidate>
-        {/* ... (Tu JSX está perfecto, no necesita ningún cambio) ... */}
+        {/* Tu JSX está perfecto, no se toca */}
         <FormField
           label="Nombre de Usuario"
           type="text"

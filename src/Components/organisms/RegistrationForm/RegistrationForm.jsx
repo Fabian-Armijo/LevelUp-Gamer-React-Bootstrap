@@ -3,7 +3,7 @@ import FormField from '../../molecules/FormField/FormField';
 import Button from '../../atoms/Button/Button';
 import Checkbox from '../../atoms/Checkbox/Checkbox';
 import './RegistrationForm.css';
-import AuthService from '../../../Services/AuthService';
+import AuthService from '../../../services/AuthService';
 
 const RegistrationForm = ({ onRegistrationSuccess }) => {
   const [formData, setFormData] = useState({

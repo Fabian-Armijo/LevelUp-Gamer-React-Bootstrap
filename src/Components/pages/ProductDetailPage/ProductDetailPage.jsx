@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../organisms/Header/Header';
-import ProductService from '../../../Services/ProductService'; 
-import CartService from '../../../Services/CartService';
+import ProductService from '../../../services/ProductService'; 
+import CartService from '../../../services/CartService';
 import ReviewsSection from '../../organisms/ReviewsSection/ReviewsSection';
 import { Button } from 'react-bootstrap';
 import './ProductDetailPage.css';

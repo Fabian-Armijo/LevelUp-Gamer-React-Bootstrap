@@ -85,15 +85,36 @@
   margin: 0;
 }
 
-/* --- ¡NUEVOS ESTILOS DE RECOMPENSAS! --- */
+/* --- ¡ESTILOS DE RECOMPENSAS (ACTUALIZADOS)! --- */
 .rewards-section {
   background-color: rgba(30, 144, 255, 0.05);
   border: 1px solid var(--color-primary-accent);
 }
 
-.rewards-section h2 {
-  color: var(--color-primary-accent);
+/* ¡NUEVO! Contenedor para el título H2 y el botón */
+.rewards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Copia los estilos de .profile-section h2 para mantener la consistencia */
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
 }
+
+/* ¡ACTUALIZADO! El H2 dentro del header de recompensas */
+.rewards-header h2 {
+  font-family: var(--font-header);
+  font-size: 1.5rem;
+  color: var(--color-primary-accent);
+  /* Resetea los márgenes para que 'flex' lo alinee bien */
+  margin: 0; 
+  padding: 0;
+  border: none;
+}
+/* (La regla .rewards-section h2 que tenías ya no es necesaria
+   si tu único H2 está dentro del .rewards-header) */
+
 
 .profile-rewards-grid {
   display: grid;

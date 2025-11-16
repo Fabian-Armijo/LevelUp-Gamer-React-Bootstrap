@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Header from '../organisms/Header/Header';
-import CartService from '../../Services/CartService';
-import OrderService from '../../Services/OrderService'; // <-- 1. IMPORTA EL SERVICIO DE PEDIDOS
+import CartService from '../../services/CartService';
+import OrderService from '../../services/OrderService'; // <-- 1. IMPORTA EL SERVICIO DE PEDIDOS
 import { useAuth } from '../../context/AuthContext'; // <-- 2. IMPORTA EL "CEREBRO"
 import './CartPage.css';
 

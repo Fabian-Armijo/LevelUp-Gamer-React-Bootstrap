@@ -7,10 +7,18 @@ export const AuthProvider = ({ children }) => {
     
     // 1. El estado ahora guarda el OBJETO de usuario (o null)
     const [user, setUser] = useState(null);
+    // Un estado de 'cargando' para evitar parpadeos al inicio
     const [isLoading, setIsLoading] = useState(true);
 
-    // 2. Función para refrescar los datos del usuario (la usaremos después del checkout)
+    // 2. Función para refrescar los datos del usuario (la usará Perfil y Checkout)
     const refreshUser = () => {
+        // Asegúrate de que haya un token antes de intentar refrescar
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setUser(null);
+            return Promise.resolve(); // Devuelve una promesa resuelta
+        }
+
         return ProfileService.getMyProfile()
             .then(response => {
                 setUser(response.data); // Guarda el perfil completo
@@ -23,15 +31,13 @@ export const AuthProvider = ({ children }) => {
 
     // 3. Comprueba (al cargar la app) si ya existe un token
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            refreshUser().finally(() => setIsLoading(false)); // Carga el perfil
-        } else {
-            setIsLoading(false); // No hay token, no hay usuario
-        }
+        setIsLoading(true);
+        refreshUser().finally(() => {
+            setIsLoading(false);
+        });
     }, []);
 
-    // 4. Función de Login: guarda token Y perfil
+    // 4. Función de Login: guarda token Y carga el perfil
     const login = (token) => {
         localStorage.setItem('token', token);
         // Inmediatamente después del login, busca el perfil
@@ -53,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         login,
         logout,
-        refreshUser // ¡Nueva función!
+        refreshUser // La función para actualizar puntos
     };
 
     // No renderiza la app hasta saber si estamos logueados o no
@@ -68,6 +74,7 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+// El hook para usar el contexto
 export const useAuth = () => {
     return useContext(AuthContext);
 };
