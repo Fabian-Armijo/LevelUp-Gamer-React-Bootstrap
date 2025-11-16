@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import RewardsService from '../../Services/RewardsService';
 import Header from '../organisms/Header/Header';
 import { Button } from 'react-bootstrap';
-import './RewardsPage.css'; // <-- Asegúrate de que importe su propio CSS
+
 
 // Define tus recompensas
 const REWARDS = [
