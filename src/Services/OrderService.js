@@ -1,19 +1,25 @@
-import api from './api'; // ¡Importa el interceptor con token!
+import api from './api'; // Asegúrate de importar tu interceptor con token
 
 const BASE_URL = 'http://localhost:8081/api/orders';
 
 class OrderService {
 
     /**
-     * Llama al endpoint de checkout
-     * Petición: POST /api/orders/checkout
+     * Realiza la compra (Checkout)
+     * POST /api/orders/checkout
      */
     checkout() {
-        // No necesita body, el backend saca el usuario del token
         return api.post(`${BASE_URL}/checkout`);
     }
 
-    // (Aquí podrías añadir un 'getOrderHistory' en el futuro)
+    /**
+     * Obtiene el historial de pedidos del usuario logueado
+     * GET /api/orders/my-orders
+     * (Este es el método que te faltaba)
+     */
+    getMyOrders() {
+        return api.get(`${BASE_URL}/my-orders`);
+    }
 }
 
 export default new OrderService();
