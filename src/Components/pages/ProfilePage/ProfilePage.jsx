@@ -12,10 +12,12 @@ import OrderHistory from '../../molecules/OrderHistory/OrderHistory';
 
 const ProfilePage = () => {
     const navigate = useNavigate();
+    // Obtiene la función refreshUser del contexto para actualizar los datos globales
     const { refreshUser } = useAuth(); 
 
     // --- Estado para Pestañas (Sidebar) ---
-    const [activeTab, setActiveTab] = useState('profile'); // 'profile' o 'orders'
+    // Valores posibles: 'profile', 'orders', 'dashboard'
+    const [activeTab, setActiveTab] = useState('profile'); 
 
     // --- Estado del Usuario ---
     const [userInfo, setUserInfo] = useState({
@@ -55,6 +57,7 @@ const ProfilePage = () => {
                     username,
                     email,
                     receiveNotifications,
+                    // Añade un timestamp para evitar caché al actualizar la foto
                     profilePictureUrl: profilePictureUrl ? `${profilePictureUrl}?t=${Date.now()}` : '',
                     userRole: userRole || 'ROLE_USER',
                     pointsBalance: pointsBalance || 0,
@@ -96,6 +99,8 @@ const ProfilePage = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (userInfo.username.length < 4) newErrors.username = 'El nombre de usuario debe tener al menos 4 caracteres.';
         if (!emailRegex.test(userInfo.email)) newErrors.email = 'Por favor, introduce un correo válido.';
+        
+        // Validación de Contraseña
         if (userInfo.newPassword || userInfo.confirmPassword) {
             if (!userInfo.currentPassword) newErrors.currentPassword = 'Debes ingresar tu contraseña actual para cambiarla.';
             if (userInfo.newPassword.length < 6) newErrors.newPassword = 'La nueva contraseña debe tener al menos 6 caracteres.';
@@ -114,17 +119,19 @@ const ProfilePage = () => {
         setServerMessage({ type: '', text: '' });
         try {
             const response = await ProfileService.uploadProfilePicture(selectedFile);
+            // Bypassear caché
             const newUrlWithCacheBust = `${response.data.profilePictureUrl}?t=${Date.now()}`;
             
             setUserInfo(prev => ({ ...prev, profilePictureUrl: newUrlWithCacheBust }));
-            await refreshUser(); 
+            await refreshUser(); // Actualiza el contexto
 
             setServerMessage({ type: 'success', text: '¡Foto de perfil actualizada!' });
             setSelectedFile(null);
             if (fileInputRef.current) fileInputRef.current.value = null; 
         } catch (error) {
             console.error('Error al subir la foto:', error);
-            setServerMessage({ type: 'error', text: 'Error al subir la foto.' });
+            const errorMsg = error.response?.data?.message || 'Error al subir la foto.';
+            setServerMessage({ type: 'error', text: errorMsg });
         } finally {
             setIsLoading(false);
         }
@@ -155,13 +162,14 @@ const ProfilePage = () => {
 
         try {
             await Promise.all(tasks);
-            await refreshUser(); 
+            await refreshUser(); // Actualiza el contexto global
             setServerMessage({ type: 'success', text: '¡Perfil actualizado con éxito!' });
             setIsEditing(false); 
+            // Limpia campos de contraseña después del éxito
             setUserInfo(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
         } catch (error) {
             console.error('Error al actualizar:', error);
-            const errorMsg = error.response?.data || 'Error al guardar. Inténtalo de nuevo.';
+            const errorMsg = error.response?.data?.message || 'Error al guardar. Inténtalo de nuevo.';
             setServerMessage({ type: 'error', text: errorMsg });
         } finally {
             setIsLoading(false);
@@ -181,8 +189,10 @@ const ProfilePage = () => {
         const startPoints = LEVEL_START_POINTS[currentLevel];
         const goalPoints = LEVEL_GOALS[currentLevel];
         const pointsInCurrentLevel = currentPoints - startPoints;
+        // Puntos necesarios en el nivel actual para avanzar
         const pointsNeededForLevel = goalPoints - startPoints;
         const calculatedPercent = (pointsInCurrentLevel / pointsNeededForLevel) * 100;
+        
         progressPercent = Math.max(0, Math.min(100, calculatedPercent));
         pointsForNextLevel = goalPoints - currentPoints;
         nextLevelGoalText = `${currentPoints.toLocaleString('es-CL')} / ${goalPoints.toLocaleString('es-CL')} Pts. Totales`;
@@ -195,6 +205,16 @@ const ProfilePage = () => {
         return <div><Header /><div className="container mt-5"><h2>Cargando...</h2></div></div>;
     }
 
+    // Determinar si el usuario es administrador
+    const isAdmin = userInfo.userRole === 'ROLE_ADMIN';
+
+    // Función simple para navegar al dashboard si se hace clic en el botón de contenido
+    const handleGoToAdminDashboard = () => {
+        // En una app real, esta ruta podría ser una página separada
+        navigate('/admin/dashboard');
+    };
+
+
     return (
         <div className="profile-page-wrapper">
             <Header />
@@ -205,7 +225,11 @@ const ProfilePage = () => {
                     <div className="sidebar-user-summary">
                         <div className="sidebar-avatar">
                             {userInfo.profilePictureUrl ? (
-                                <img src={userInfo.profilePictureUrl} alt="Avatar" />
+                                <img 
+                                    src={userInfo.profilePictureUrl} 
+                                    alt="Avatar" 
+                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100/333/FFF?text=P"; }}
+                                />
                             ) : (
                                 <div className="avatar-placeholder">{userInfo.username.charAt(0).toUpperCase()}</div>
                             )}
@@ -215,6 +239,15 @@ const ProfilePage = () => {
                     </div>
 
                     <nav className="sidebar-nav">
+                        {/* BOTÓN DASHBOARD ADMIN (SOLO VISIBLE PARA ADMIN) */}
+                        {isAdmin && (
+                            <button 
+                                className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('dashboard')}
+                            >
+                                Dashboard Admin
+                            </button>
+                        )}
                         <button 
                             className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
                             onClick={() => setActiveTab('profile')}
@@ -236,14 +269,30 @@ const ProfilePage = () => {
                         <div className={`server-message ${serverMessage.type} mb-4`}>{serverMessage.text}</div>
                     )}
 
-                    {/* PESTAÑA: MIS COMPRAS */}
-                    {activeTab === 'orders' ? (
+                    {/* PESTAÑA: DASHBOARD ADMIN */}
+                    {activeTab === 'dashboard' && isAdmin ? (
+                        <div className="admin-dashboard-content">
+                            <h1 className="profile-title">Panel de Administración</h1>
+                            <section className="profile-section">
+                                <h2>Gestión Rápida</h2>
+                                <p>Bienvenido, Administrador. Desde aquí puedes acceder a las herramientas de moderación y gestión de tu eCommerce.</p>
+                                <ul className="list-unstyled mt-3">
+                                    <li>- Moderar Reseñas (desde detalles de producto)</li>
+                                    <li>- Revisar Estadísticas de Ventas (si está implementado)</li>
+                                </ul>
+                                <Button className="mt-4" onClick={handleGoToAdminDashboard}>
+                                    Gestión de Contenido (Ruta /admin)
+                                </Button>
+                            </section>
+                        </div>
+                    ) : activeTab === 'orders' ? (
+                        /* PESTAÑA: MIS COMPRAS */
                         <div className="orders-tab-content">
-                             {/* Asegúrate de que este componente exista o comenta la línea */}
+                             <h1 className="profile-title">Historial de Compras</h1>
                              <OrderHistory /> 
                         </div>
                     ) : (
-                        // PESTAÑA: MI PERFIL
+                        // PESTAÑA: MI PERFIL (activeTab === 'profile')
                         <div className="profile-tab-content">
                             <h1 className="profile-title">Mi Perfil</h1>
 
@@ -279,7 +328,7 @@ const ProfilePage = () => {
                                 </section>
                             )}
 
-                            {/* B. FORMULARIO DE INFORMACIÓN PERSONAL (¡AQUÍ ESTÁ LO QUE FALTABA!) */}
+                            {/* B. FORMULARIO DE INFORMACIÓN PERSONAL */}
                             <form className="profile-form" onSubmit={handleSubmit} noValidate>
                                 <section className="profile-section mb-4">
                                     <h2>Información Personal</h2>
@@ -289,7 +338,7 @@ const ProfilePage = () => {
                                         name="username" 
                                         value={userInfo.username} 
                                         onChange={handleChange} 
-                                        disabled={!isEditing} 
+                                        disabled={!isEditing || isLoading} 
                                         error={errors.username} 
                                     />
                                     <FormField 
@@ -298,7 +347,7 @@ const ProfilePage = () => {
                                         name="email" 
                                         value={userInfo.email} 
                                         onChange={handleChange} 
-                                        disabled={!isEditing} 
+                                        disabled={!isEditing || isLoading} 
                                         error={errors.email} 
                                     />
 
@@ -313,9 +362,10 @@ const ProfilePage = () => {
                                                     onChange={handleFileChange} 
                                                     ref={fileInputRef}
                                                     accept="image/*"
+                                                    disabled={isLoading}
                                                 />
                                                 <Button type="button" onClick={handlePictureUpload} disabled={!selectedFile || isLoading}>
-                                                    Subir
+                                                    {isLoading && selectedFile ? 'Subiendo...' : 'Subir'}
                                                 </Button>
                                             </div>
                                         </div>
@@ -327,9 +377,9 @@ const ProfilePage = () => {
                                     <section className="profile-section mb-4">
                                         <h2>Cambiar Contraseña</h2>
                                         <p className="password-note">Deja los campos en blanco si no quieres cambiarla.</p>
-                                        <FormField label="Contraseña Actual" type="password" name="currentPassword" value={userInfo.currentPassword} onChange={handleChange} />
-                                        <FormField label="Nueva Contraseña" type="password" name="newPassword" value={userInfo.newPassword} onChange={handleChange} />
-                                        <FormField label="Confirmar Nueva Contraseña" type="password" name="confirmPassword" value={userInfo.confirmPassword} onChange={handleChange} />
+                                        <FormField label="Contraseña Actual" type="password" name="currentPassword" value={userInfo.currentPassword} onChange={handleChange} error={errors.currentPassword} disabled={isLoading} />
+                                        <FormField label="Nueva Contraseña" type="password" name="newPassword" value={userInfo.newPassword} onChange={handleChange} error={errors.newPassword} disabled={isLoading} />
+                                        <FormField label="Confirmar Nueva Contraseña" type="password" name="confirmPassword" value={userInfo.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} />
                                     </section>
                                 )}
 
@@ -344,7 +394,7 @@ const ProfilePage = () => {
                                                 name="receiveNotifications"
                                                 checked={userInfo.receiveNotifications}
                                                 onChange={handleChange}
-                                                disabled={!isEditing}
+                                                disabled={!isEditing || isLoading}
                                             />
                                             Quiero recibir ofertas y novedades en mi correo.
                                         </label>
@@ -361,7 +411,7 @@ const ProfilePage = () => {
                                             <button 
                                                 type="button" 
                                                 className="cancel-button btn btn-outline-secondary" 
-                                                onClick={() => setIsEditing(false)}
+                                                onClick={() => { setIsEditing(false); setErrors({}); setServerMessage({ type: '', text: '' }); }}
                                                 disabled={isLoading}
                                             >
                                                 Cancelar
@@ -372,6 +422,7 @@ const ProfilePage = () => {
                                             type="button" 
                                             className="edit-button btn btn-primary" 
                                             onClick={() => setIsEditing(true)}
+                                            disabled={isLoading}
                                         >
                                             Editar Perfil
                                         </button>

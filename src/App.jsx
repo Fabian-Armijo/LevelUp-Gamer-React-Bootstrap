@@ -8,33 +8,33 @@ import CartPage from './Components/pages/CartPage';
 import Footer from './Components/organisms/Footer/Footer';
 import ProfilePage from './Components/pages/ProfilePage/ProfilePage';
 import RewardsPage from './Components/pages/RewardsPage';
-// --- 1. IMPORTA EL CONTEXTO Y EL GUARDIA ---
-import { AuthProvider } from './context/AuthContext'; // Ajusta esta ruta
-import ProtectedRoute from './Components/utils/ProtectedRoute'; // Ajusta esta ruta
+// --- 1. IMPORTA EL DASHBOARD DE ADMIN ---
+import AdminDashboard from './Components/pages/AdminDashboard/AdminDashboard'; 
+
+import { AuthProvider } from './context/AuthContext'; 
+import ProtectedRoute from './Components/utils/ProtectedRoute'; 
 
 import './App.css';
 
 const AppLayout = () => {
   const location = useLocation();
-  // Tu lógica para ocultar el footer está perfecta
+  // Ocultamos el footer también en el dashboard de admin para tener más espacio
   const isAuthPage = location.pathname === '/login' || location.pathname === '/registro';
-  const containerClassName = isAuthPage ? 'app-container' : 'main-layout';
-  const showFooter = !isAuthPage;
+  const isAdminPage = location.pathname.startsWith('/admin');
+  
+  const containerClassName = (isAuthPage || isAdminPage) ? 'app-container-fluid' : 'main-layout';
+  const showFooter = !isAuthPage && !isAdminPage;
 
   return (
     <div className={containerClassName}>
       <Routes>
-        {/* --- 2. RUTAS PÚBLICAS (Cualquiera puede verlas) --- */}
+        {/* --- RUTAS PÚBLICAS --- */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegistrationPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/producto/:productId" element={<ProductDetailPage />} />
-        {/* --- 2. ¡AÑADE LA RUTA DE RECOMPENSAS! --- */}
-        <Route path="/recompensas" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
         
-        {/* --- 3. RUTAS PROTEGIDAS (Requieren login) --- */}
-        {/* Envolvemos las rutas privadas con el "Guardia" */}
-        
+        {/* --- RUTAS PROTEGIDAS --- */}
         <Route 
           path="/perfil" 
           element={
@@ -53,6 +53,20 @@ const AppLayout = () => {
           } 
         />
 
+        <Route path="/recompensas" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
+
+        {/* --- 2. RUTA DEL ADMIN DASHBOARD --- */}
+        {/* Protegida por ProtectedRoute para asegurar que haya usuario logueado.
+            El propio componente AdminDashboard verifica si es ROLE_ADMIN. */}
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {showFooter && <Footer />}
@@ -63,9 +77,6 @@ const AppLayout = () => {
 function App() {
   return (
     <BrowserRouter>
-      {/* --- 4. "ENCHUFA" EL CEREBRO --- */}
-      {/* AuthProvider le da a AppLayout (y a todos sus hijos)
-          acceso al estado 'isAuthenticated' */}
       <AuthProvider>
         <AppLayout />
       </AuthProvider>
