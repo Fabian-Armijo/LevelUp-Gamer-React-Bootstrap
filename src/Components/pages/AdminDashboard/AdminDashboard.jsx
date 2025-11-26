@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../../services/ProductService';
+import AdminService from '../../../Services/AdminService'; 
 import { useAuth } from '../../../context/AuthContext';
 import './AdminDashboard.css';
 
-// --- SUB-COMPONENTE: GRÁFICO DE BARRAS SIMPLE (Sin librerías) ---
+// --- SUB-COMPONENTE: GRÁFICO ---
 const SimpleBarChart = ({ data, label }) => {
-    const maxVal = Math.max(...data.map(d => d.value));
+    const maxVal = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1;
     return (
         <div className="chart-container">
             <h3>{label}</h3>
@@ -15,8 +16,8 @@ const SimpleBarChart = ({ data, label }) => {
                     <div key={index} className="chart-column">
                         <div 
                             className="bar" 
-                            style={{ height: `${(item.value / maxVal) * 100}%` }}
-                            title={`${item.label}: $${item.value}`}
+                            style={{ height: `${(item.value / (maxVal || 1)) * 100}%` }}
+                            title={`${item.label}: $${item.value?.toLocaleString('es-CL')}`}
                         ></div>
                         <span className="bar-label">{item.label}</span>
                     </div>
@@ -26,206 +27,188 @@ const SimpleBarChart = ({ data, label }) => {
     );
 };
 
-// --- SUB-COMPONENTE: VISTA GENERAL (HOME) ---
+// --- SUB-COMPONENTE: VISTA GENERAL ---
 const AdminOverview = () => {
-    const [timeRange, setTimeRange] = useState('week'); // 'day', 'week', 'month'
-    
-    // Datos simulados (Aquí conectarías con un OrderService.getStats() en el futuro)
-    const getMockData = (range) => {
-        if (range === 'day') return [
-            { label: '09:00', value: 15000 }, { label: '12:00', value: 45000 }, 
-            { label: '15:00', value: 30000 }, { label: '18:00', value: 60000 }, { label: '21:00', value: 25000 }
-        ];
-        if (range === 'week') return [
-            { label: 'Lun', value: 120000 }, { label: 'Mar', value: 150000 }, 
-            { label: 'Mié', value: 180000 }, { label: 'Jue', value: 90000 }, 
-            { label: 'Vie', value: 250000 }, { label: 'Sáb', value: 300000 }, { label: 'Dom', value: 110000 }
-        ];
-        return [ // Month
-            { label: 'Sem 1', value: 800000 }, { label: 'Sem 2', value: 950000 },
-            { label: 'Sem 3', value: 600000 }, { label: 'Sem 4', value: 1200000 }
-        ];
+    const [backendStats, setBackendStats] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const { logout } = useAuth(); // Necesitamos logout para el error 403
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        loadStats();
+    }, []);
+
+    const loadStats = async () => {
+        try {
+            setIsLoading(true);
+            const response = await AdminService.getStats();
+            setBackendStats(response.data);
+            setIsLoading(false);
+        } catch (err) {
+            console.error("Error al cargar estadísticas:", err);
+            setIsLoading(false);
+            
+            // MANEJO DE ERROR 403 ESPECÍFICO
+            if (err.response && err.response.status === 403) {
+                setError("FORBIDDEN"); // Marcador especial
+            } else {
+                setError("No se pudieron cargar los datos. Revisa que el backend esté corriendo.");
+            }
+        }
     };
 
-    const stats = {
-        totalSales: 2540000,
-        orders: 142,
-        avgTicket: 17800
+    const handleForceLogout = () => {
+        logout();
+        navigate('/login');
     };
+
+    if (isLoading) return <div className="p-4">Cargando estadísticas...</div>;
+
+    // UI ESPECIAL PARA ERROR 403
+    if (error === "FORBIDDEN") {
+        return (
+            <div className="admin-view fade-in">
+                <div className="server-message error" style={{ textAlign: 'center', padding: '40px' }}>
+                    <h2 style={{ color: '#ff4d4d', marginBottom: '10px' }}>⛔ Acceso Denegado (403)</h2>
+                    <p style={{ marginBottom: '20px' }}>Tu usuario tiene permiso en el Frontend, pero el Backend lo rechaza.</p>
+                    <ul style={{ listStyle: 'none', padding: 0, color: '#ccc', marginBottom: '20px' }}>
+                        <li>1. Tu token puede haber expirado.</li>
+                        <li>2. En la base de datos, el rol debe ser exactamente <strong>ROLE_ADMIN</strong>.</li>
+                    </ul>
+                    <button className="btn-primary-admin" onClick={handleForceLogout} style={{ backgroundColor: '#ff4d4d' }}>
+                        Cerrar Sesión y Reintentar
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) return <div className="p-4 text-red-500">{error}</div>;
+    if (!backendStats) return null;
+
+    const chartData = [
+        { label: 'Hoy', value: backendStats.salesToday || 0 },
+        { label: 'Semana', value: backendStats.salesWeek || 0 },
+        { label: 'Mes', value: backendStats.salesMonth || 0 },
+    ];
 
     return (
         <div className="admin-view fade-in">
             <div className="admin-header">
                 <h2>Resumen de Ventas</h2>
                 <div className="time-filters">
-                    <button className={timeRange === 'day' ? 'active' : ''} onClick={() => setTimeRange('day')}>Hoy</button>
-                    <button className={timeRange === 'week' ? 'active' : ''} onClick={() => setTimeRange('week')}>Semana</button>
-                    <button className={timeRange === 'month' ? 'active' : ''} onClick={() => setTimeRange('month')}>Mes</button>
+                    <span className="badge">Actualizado: {new Date().toLocaleTimeString()}</span>
                 </div>
             </div>
 
-            {/* Tarjetas de KPI */}
             <div className="kpi-grid">
                 <div className="kpi-card blue">
-                    <h3>Ventas Totales</h3>
-                    <p>${stats.totalSales.toLocaleString('es-CL')}</p>
-                    <span className="trend positive">↑ 12% vs periodo anterior</span>
+                    <h3>Ventas Hoy</h3>
+                    <p>${(backendStats.salesToday || 0).toLocaleString('es-CL')}</p>
+                    <span className="trend">Pedidos: {backendStats.ordersToday || 0}</span>
                 </div>
                 <div className="kpi-card green">
-                    <h3>Pedidos</h3>
-                    <p>{stats.orders}</p>
-                    <span className="trend positive">↑ 5% nuevos clientes</span>
+                    <h3>Ventas Mes</h3>
+                    <p>${(backendStats.salesMonth || 0).toLocaleString('es-CL')}</p>
                 </div>
                 <div className="kpi-card purple">
-                    <h3>Ticket Promedio</h3>
-                    <p>${stats.avgTicket.toLocaleString('es-CL')}</p>
-                    <span className="trend negative">↓ 2% vs periodo anterior</span>
+                    <h3>Ventas Año</h3>
+                    <p>${(backendStats.salesYear || 0).toLocaleString('es-CL')}</p>
                 </div>
             </div>
 
-            {/* Gráfico */}
-            <div className="chart-section">
-                <SimpleBarChart data={getMockData(timeRange)} label={`Rendimiento por ${timeRange === 'week' ? 'Semana' : timeRange === 'day' ? 'Hora' : 'Mes'}`} />
+            <div className="dashboard-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px' }}>
+                <div className="chart-section">
+                    <SimpleBarChart data={chartData} label="Ingresos" />
+                </div>
+                <div className="recent-orders-section table-container">
+                    <h3 style={{ padding: '15px', borderBottom: '1px solid #333' }}>Últimos Pedidos</h3>
+                    <table className="admin-table">
+                        <thead>
+                            <tr><th>ID</th><th>Fecha</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            {backendStats.recentOrders?.length > 0 ? (
+                                backendStats.recentOrders.map(order => (
+                                    <tr key={order.id}>
+                                        <td>#{order.id}</td>
+                                        <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                                        <td>${order.totalAmount?.toLocaleString('es-CL')}</td>
+                                    </tr>
+                                ))
+                            ) : <tr><td colSpan="3">Sin pedidos recientes</td></tr>}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
 };
 
-// --- SUB-COMPONENTE: GESTIÓN DE PRODUCTOS (CRUD) ---
+// --- SUB-COMPONENTE: PRODUCTOS (Sin cambios mayores) ---
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [currentProduct, setCurrentProduct] = useState(null); // null = create, object = edit
+    const [currentProduct, setCurrentProduct] = useState(null); 
+    const [formData, setFormData] = useState({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '', distributor: '' });
 
-    // Estado del formulario
-    const [formData, setFormData] = useState({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '' });
-
-    useEffect(() => {
-        loadProducts();
-    }, []);
+    useEffect(() => { loadProducts(); }, []);
 
     const loadProducts = () => {
         setIsLoading(true);
-        ProductService.getAllProducts()
-            .then(res => setProducts(res.data))
-            .catch(err => console.error("Error cargando productos", err))
-            .finally(() => setIsLoading(false));
-    };
-
-    const handleEdit = (product) => {
-        setCurrentProduct(product);
-        setFormData({ 
-            name: product.name, 
-            price: product.price, 
-            category: product.category, 
-            description: product.description,
-            imageUrl: product.imageUrl,
-            manufacturer: product.manufacturer || ''
-        });
-        setIsFormOpen(true);
-    };
-
-    const handleDelete = async (id) => {
-        if (window.confirm("¿Estás seguro de eliminar este producto?")) {
-            try {
-                await ProductService.deleteProduct(id);
-                loadProducts(); // Recargar lista
-            } catch (error) {
-                alert("Error al eliminar");
-            }
-        }
+        ProductService.getAllProducts().then(res => setProducts(res.data)).finally(() => setIsLoading(false));
     };
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (currentProduct) {
-                // Update
-                await ProductService.updateProduct(currentProduct.id, formData);
-            } else {
-                // Create
-                await ProductService.createProduct(formData);
-            }
+            if (currentProduct) await ProductService.updateProduct(currentProduct.id, formData);
+            else await ProductService.createProduct(formData);
             setIsFormOpen(false);
-            setCurrentProduct(null);
-            setFormData({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '' });
             loadProducts();
-        } catch (error) {
-            console.error(error);
-            alert("Error al guardar el producto");
-        }
+        } catch (error) { alert("Error al guardar."); }
     };
+
+    // Funciones auxiliares para el formulario
+    const openCreate = () => { setCurrentProduct(null); setFormData({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '', distributor: '' }); setIsFormOpen(true); };
+    const openEdit = (p) => { setCurrentProduct(p); setFormData({ ...p, manufacturer: p.manufacturer||'', distributor: p.distributor||'' }); setIsFormOpen(true); };
+    const handleDelete = async (id) => { if(window.confirm("¿Borrar?")) { await ProductService.deleteProduct(id); loadProducts(); } };
 
     return (
         <div className="admin-view fade-in">
             <div className="admin-header">
-                <h2>Inventario de Productos</h2>
-                <button className="btn-primary-admin" onClick={() => { setCurrentProduct(null); setFormData({ name: '', price: 0, category: '', description: '', imageUrl: '' }); setIsFormOpen(true); }}>
-                    + Nuevo Producto
-                </button>
+                <h2>Productos</h2>
+                <button className="btn-primary-admin" onClick={openCreate}>+ Nuevo</button>
             </div>
-
-            {/* TABLA DE PRODUCTOS */}
             <div className="table-container">
                 <table className="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Img</th>
-                            <th>Nombre</th>
-                            <th>Categoría</th>
-                            <th>Precio</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Nombre</th><th>Precio</th><th>Acciones</th></tr></thead>
                     <tbody>
                         {products.map(p => (
                             <tr key={p.id}>
-                                <td><img src={p.imageUrl} alt="mini" className="table-img" /></td>
                                 <td>{p.name}</td>
-                                <td><span className="badge">{p.category}</span></td>
                                 <td>${p.price.toLocaleString('es-CL')}</td>
                                 <td>
-                                    <button className="action-btn edit" onClick={() => handleEdit(p)}>✏️</button>
+                                    <button className="action-btn edit" onClick={() => openEdit(p)}>✏️</button>
                                     <button className="action-btn delete" onClick={() => handleDelete(p.id)}>🗑️</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {isLoading && <p className="text-center mt-4">Cargando inventario...</p>}
             </div>
-
-            {/* MODAL / FORMULARIO FLOTANTE */}
             {isFormOpen && (
                 <div className="admin-modal-overlay">
                     <div className="admin-modal">
-                        <h3>{currentProduct ? 'Editar Producto' : 'Crear Producto'}</h3>
+                        <h3>{currentProduct ? 'Editar' : 'Crear'}</h3>
                         <form onSubmit={handleFormSubmit}>
-                            <div className="form-group">
-                                <label>Nombre</label>
-                                <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
-                            </div>
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Precio</label>
-                                    <input type="number" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} required />
-                                </div>
-                                <div className="form-group">
-                                    <label>Categoría</label>
-                                    <input type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required />
-                                </div>
-                            </div>
-                            <div className="form-group">
-                                <label>URL Imagen</label>
-                                <input type="text" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
-                            </div>
-                            <div className="form-group">
-                                <label>Descripción</label>
-                                <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows="3"></textarea>
-                            </div>
+                            <div className="form-group"><label>Nombre</label><input value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} required/></div>
+                            <div className="form-group"><label>Precio</label><input type="number" value={formData.price} onChange={e=>setFormData({...formData, price:Number(e.target.value)})} required/></div>
+                            <div className="form-group"><label>Categoría</label><input value={formData.category} onChange={e=>setFormData({...formData, category:e.target.value})} required/></div>
                             <div className="modal-actions">
-                                <button type="button" className="btn-secondary-admin" onClick={() => setIsFormOpen(false)}>Cancelar</button>
+                                <button type="button" className="btn-secondary-admin" onClick={()=>setIsFormOpen(false)}>Cancelar</button>
                                 <button type="submit" className="btn-primary-admin">Guardar</button>
                             </div>
                         </form>
@@ -236,63 +219,38 @@ const AdminProducts = () => {
     );
 };
 
-// --- COMPONENTE PRINCIPAL: LAYOUT DEL DASHBOARD ---
+// --- COMPONENTE PRINCIPAL ---
 const AdminDashboard = () => {
-    const [activeView, setActiveView] = useState('overview'); // 'overview', 'products', 'settings'
+    const [activeView, setActiveView] = useState('overview'); 
     const navigate = useNavigate();
     const { logout, user } = useAuth();
 
-    // Protección extra (aunque ProtectedRoute ya lo hace)
     useEffect(() => {
-        if (user && user.userRole !== 'ROLE_ADMIN') {
-            navigate('/');
-        }
+        if (user && user.userRole !== 'ROLE_ADMIN') navigate('/');
     }, [user, navigate]);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+    if (!user || user.userRole !== 'ROLE_ADMIN') return null; 
 
     return (
         <div className="admin-layout">
-            {/* 1. SIDEBAR IZQUIERDO */}
             <aside className="admin-sidebar">
-                <div className="sidebar-brand">
-                    <h2>Admin<span>Panel</span></h2>
-                </div>
-                
+                <div className="sidebar-brand"><h2>Admin<span>Panel</span></h2></div>
                 <nav className="admin-nav">
                     <ul>
-                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>
-                            <span className="icon">📊</span> Dashboard
-                        </li>
-                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>
-                            <span className="icon">📦</span> Productos
-                        </li>
-                        {/* Escalabilidad: Aquí puedes añadir 'Usuarios', 'Pedidos', etc. */}
-                        <li className="disabled" title="Próximamente">
-                            <span className="icon">👥</span> Usuarios
-                        </li>
+                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>📊 Dashboard</li>
+                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>📦 Productos</li>
                     </ul>
                 </nav>
-
                 <div className="sidebar-footer">
-                    <button onClick={() => navigate('/')} className="back-store-btn">⬅ Ir a Tienda</button>
-                    <button onClick={handleLogout} className="logout-btn">Cerrar Sesión</button>
+                    <button onClick={() => navigate('/')} className="back-store-btn">⬅ Tienda</button>
+                    <button onClick={() => { logout(); navigate('/login'); }} className="logout-btn">Salir</button>
                 </div>
             </aside>
-
-            {/* 2. ÁREA DE CONTENIDO PRINCIPAL */}
             <main className="admin-main">
                 <header className="top-bar">
-                    <div className="breadcrumbs">Admin / {activeView === 'overview' ? 'Resumen' : 'Productos'}</div>
-                    <div className="admin-profile">
-                        <span>Hola, Admin</span>
-                        <div className="admin-avatar">A</div>
-                    </div>
+                    <div className="breadcrumbs">Admin / {activeView}</div>
+                    <div className="admin-profile"><span>{user.username}</span><div className="admin-avatar">A</div></div>
                 </header>
-
                 <div className="content-wrapper">
                     {activeView === 'overview' && <AdminOverview />}
                     {activeView === 'products' && <AdminProducts />}
