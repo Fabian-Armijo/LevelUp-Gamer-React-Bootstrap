@@ -1,0 +1,105 @@
+/* 1. El Contenedor de la Página (Fondo negro y centrado) */
+.login-page-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  min-height: 100vh;       /* Ocupa toda la altura de la ventana */
+  width: 100%;
+  background-color: #000000; /* Fondo de la página (detrás de la tarjeta) */
+  padding: 20px;           /* Un poco de margen en móviles */
+  box-sizing: border-box;
+}
+
+/* 2. La Tarjeta Dividida (El contenedor principal de tu diseño) */
+.auth-split-container {
+  display: flex;           /* Pone los paneles lado a lado */
+  width: 100%;
+  max-width: 900px;        /* Ancho máximo para que no se estire demasiado */
+  min-height: 550px;       /* Altura mínima para que se vea bien */
+  background-color: #1a1a1a;
+  border-radius: 20px;     /* Bordes redondeados en las esquinas */
+  overflow: hidden;        /* Asegura que el contenido respete los bordes redondeados */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); /* Sombra para "flotar" */
+  border: 1px solid #333;
+}
+
+/* 3. Panel Izquierdo (Color y Logo) */
+.auth-panel {
+  flex: 1; /* Ocupa el 50% del espacio */
+  /* El gradiente de tu imagen (Azul a Verde) */
+  background: linear-gradient(135deg, #2193b0, #6dd5ed, #42f5a7); 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+  color: #000; /* Texto oscuro según tu imagen */
+}
+
+.auth-logo {
+  width: 120px;
+  margin-bottom: 20px;
+  /* Sombra suave para que el logo resalte sobre el gradiente */
+  filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+}
+
+.auth-panel h1 {
+  font-family: var(--font-header, sans-serif);
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.auth-panel p {
+  font-family: var(--font-main, sans-serif);
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* 4. Panel Derecho (Formulario) */
+.form-wrapper {
+  flex: 1; /* Ocupa el otro 50% */
+  background-color: #121212; /* Fondo oscuro del formulario */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px;
+  position: relative;
+}
+
+/* Link de cambiar a registro */
+.view-switcher {
+  margin-top: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.view-switcher a {
+  color: var(--color-primary-accent, #3498db);
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.view-switcher a:hover {
+  text-decoration: underline;
+}
+
+/* --- Responsividad (Para móviles) --- */
+@media (max-width: 768px) {
+  .auth-split-container {
+    flex-direction: column; /* Uno arriba del otro en móviles */
+    max-width: 400px;
+  }
+
+  .auth-panel {
+    padding: 30px;
+    min-height: 200px;
+  }
+
+  .auth-logo {
+    width: 80px;
+  }
+}
