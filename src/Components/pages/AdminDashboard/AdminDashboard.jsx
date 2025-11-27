@@ -5,7 +5,9 @@ import AdminService from '../../../Services/AdminService';
 import { useAuth } from '../../../context/AuthContext';
 import './AdminDashboard.css';
 
-// --- SUB-COMPONENTE: GRÁFICO DE BARRAS ---
+// ==========================================
+// 1. SUB-COMPONENTE: GRÁFICO DE BARRAS
+// ==========================================
 const SimpleBarChart = ({ data, label }) => {
     const maxVal = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1;
     return (
@@ -27,7 +29,9 @@ const SimpleBarChart = ({ data, label }) => {
     );
 };
 
-// --- SUB-COMPONENTE: VISTA GENERAL (STATS) ---
+// ==========================================
+// 2. SUB-COMPONENTE: VISTA GENERAL (STATS)
+// ==========================================
 const AdminOverview = () => {
     const [backendStats, setBackendStats] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +56,7 @@ const AdminOverview = () => {
             if (err.response && err.response.status === 403) {
                 setError("FORBIDDEN");
             } else {
-                setError("No se pudieron cargar los datos. Revisa que el backend esté corriendo.");
+                setError("No se pudieron cargar los datos.");
             }
         }
     };
@@ -68,8 +72,8 @@ const AdminOverview = () => {
         return (
             <div className="admin-view fade-in">
                 <div className="server-message error" style={{ textAlign: 'center', padding: '40px' }}>
-                    <h2 style={{ color: '#ff4d4d', marginBottom: '10px' }}>⛔ Acceso Denegado (403)</h2>
-                    <p>Tu token es válido, pero el servidor rechaza el permiso.</p>
+                    <h2 style={{ color: '#ff4d4d' }}>⛔ Acceso Denegado (403)</h2>
+                    <p>Tu sesión ha expirado o no tienes permisos.</p>
                     <button className="btn-primary-admin" onClick={handleForceLogout} style={{ backgroundColor: '#ff4d4d', marginTop: '20px' }}>
                         Recargar Sesión
                     </button>
@@ -128,7 +132,8 @@ const AdminOverview = () => {
                                     <tr key={order.id}>
                                         <td>#{order.id}</td>
                                         <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                                        <td>${order.totalAmount?.toLocaleString('es-CL')}</td>
+                                        {/* CORRECCIÓN: Usamos finalPrice en lugar de totalAmount */}
+                                        <td>${(order.finalPrice || 0).toLocaleString('es-CL')}</td>
                                     </tr>
                                 ))
                             ) : <tr><td colSpan="3">Sin pedidos recientes</td></tr>}
@@ -140,18 +145,118 @@ const AdminOverview = () => {
     );
 };
 
-// --- SUB-COMPONENTE: GESTIÓN DE PRODUCTOS (CRUD CON IMÁGENES) ---
+// ==========================================
+// 3. SUB-COMPONENTE: GESTIÓN DE USUARIOS
+// ==========================================
+const AdminUsers = () => {
+    const [users, setUsers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        loadUsers();
+    }, []);
+
+    const loadUsers = () => {
+        setIsLoading(true);
+        AdminService.getAllUsers()
+            .then(res => setUsers(res.data))
+            .catch(err => console.error("Error cargando usuarios", err))
+            .finally(() => setIsLoading(false));
+    };
+
+    const handleBanToggle = async (user) => {
+        const action = user.locked ? "desbanear" : "banear";
+        if (window.confirm(`¿Estás seguro de que deseas ${action} a ${user.username}?`)) {
+            try {
+                await AdminService.toggleUserBan(user.id);
+                // Actualizamos la lista localmente
+                setUsers(users.map(u => 
+                    u.id === user.id ? { ...u, locked: !u.locked } : u
+                ));
+            } catch (error) {
+                alert("No se pudo cambiar el estado del usuario.");
+            }
+        }
+    };
+
+    if (isLoading) return <div>Cargando usuarios...</div>;
+
+    return (
+        <div className="admin-view fade-in">
+            <div className="admin-header">
+                <h2>Gestión de Usuarios</h2>
+                <span className="badge">Total: {users.length}</span>
+            </div>
+            
+            <div className="table-container">
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map(user => (
+                            <tr key={user.id} className={user.locked ? "row-banned" : ""}>
+                                <td>#{user.id}</td>
+                                <td style={{display:'flex', alignItems:'center', gap:'10px'}}>
+                                    <div className="admin-avatar" style={{width:'30px', height:'30px', fontSize:'12px'}}>
+                                        {user.username.charAt(0).toUpperCase()}
+                                    </div>
+                                    {user.username}
+                                </td>
+                                <td>{user.email}</td>
+                                <td>
+                                    <span className={`badge ${user.userRole === 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}`}>
+                                        {user.userRole.replace('ROLE_', '')}
+                                    </span>
+                                </td>
+                                <td>
+                                    {user.locked ? 
+                                        <span style={{color: 'red', fontWeight: 'bold'}}>⛔ Baneado</span> : 
+                                        <span style={{color: 'green'}}>✅ Activo</span>
+                                    }
+                                </td>
+                                <td>
+                                    {user.userRole !== 'ROLE_ADMIN' && (
+                                        <button 
+                                            className={`btn-action ${user.locked ? 'btn-unban' : 'btn-ban'}`}
+                                            onClick={() => handleBanToggle(user)}
+                                            style={{
+                                                padding: '5px 10px',
+                                                borderRadius: '4px',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                backgroundColor: user.locked ? '#4caf50' : '#ff4d4d',
+                                                color: 'white'
+                                            }}
+                                        >
+                                            {user.locked ? "🔓 Desbanear" : "🔒 Banear"}
+                                        </button>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+// ==========================================
+// 4. SUB-COMPONENTE: GESTIÓN DE PRODUCTOS
+// ==========================================
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
     
-    // Estado inicial del formulario
     const initialFormState = { 
         name: '', price: 0, category: '', description: '', 
         manufacturer: '', distributor: '', 
-        imageFile: null // Para guardar el archivo seleccionado
+        imageFile: null 
     };
     const [formData, setFormData] = useState(initialFormState);
 
@@ -168,7 +273,6 @@ const AdminProducts = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         
-        // 1. Crear FormData para envío Multipart
         const dataToSend = new FormData();
         dataToSend.append('name', formData.name);
         dataToSend.append('price', formData.price);
@@ -177,25 +281,22 @@ const AdminProducts = () => {
         dataToSend.append('manufacturer', formData.manufacturer);
         dataToSend.append('distributor', formData.distributor);
         
-        // Solo añadimos imagen si existe una nueva seleccionada
         if (formData.imageFile) {
             dataToSend.append('image', formData.imageFile);
         }
 
         try {
             if (currentProduct) {
-                // Actualizar
                 await ProductService.updateProduct(currentProduct.id, dataToSend);
             } else {
-                // Crear
                 await ProductService.createProduct(dataToSend);
             }
             setIsFormOpen(false);
-            loadProducts(); // Recargar la lista
-            alert(currentProduct ? "Producto actualizado con éxito" : "Producto creado con éxito");
+            loadProducts();
+            alert(currentProduct ? "Producto actualizado" : "Producto creado");
         } catch (error) {
             console.error(error);
-            alert("Hubo un error al guardar. Revisa la consola.");
+            alert("Error al guardar.");
         }
     };
 
@@ -210,23 +311,19 @@ const AdminProducts = () => {
         setFormData({ 
             name: p.name, 
             price: p.price, 
-            category: p.category,
+            category: p.category, 
             description: p.description || '', 
             manufacturer: p.manufacturer || '', 
             distributor: p.distributor || '',
-            imageFile: null // Importante: Reiniciar el archivo al editar
+            imageFile: null 
         }); 
         setIsFormOpen(true); 
     };
 
     const handleDelete = async (id) => { 
-        if(window.confirm("¿Estás seguro de que deseas eliminar este producto?")) { 
-            try {
-                await ProductService.deleteProduct(id); 
-                loadProducts(); 
-            } catch (error) {
-                alert("No se pudo eliminar el producto.");
-            }
+        if(window.confirm("¿Borrar este producto?")) { 
+            try { await ProductService.deleteProduct(id); loadProducts(); } 
+            catch(e) { alert("No se pudo eliminar"); }
         } 
     };
 
@@ -245,17 +342,15 @@ const AdminProducts = () => {
                             <tr key={p.id}>
                                 <td>
                                     {p.imageUrl ? (
-                                        <img src={p.imageUrl} alt="mini" style={{width:'40px', height:'40px', objectFit:'cover', borderRadius:'4px'}} onError={(e)=>{e.target.style.display='none'}}/>
-                                    ) : (
-                                        <span style={{fontSize:'20px'}}>📦</span>
-                                    )}
+                                        <img src={p.imageUrl} alt="mini" style={{width:'40px', height:'40px', objectFit:'cover', borderRadius:'4px'}}/>
+                                    ) : <span>📦</span>}
                                 </td>
                                 <td>{p.name}</td>
                                 <td>{p.category}</td>
                                 <td>${p.price.toLocaleString('es-CL')}</td>
                                 <td>
-                                    <button className="action-btn edit" onClick={() => openEdit(p)} title="Editar">✏️</button>
-                                    <button className="action-btn delete" onClick={() => handleDelete(p.id)} title="Eliminar">🗑️</button>
+                                    <button className="action-btn edit" onClick={() => openEdit(p)}>✏️</button>
+                                    <button className="action-btn delete" onClick={() => handleDelete(p.id)}>🗑️</button>
                                 </td>
                             </tr>
                         ))}
@@ -266,57 +361,21 @@ const AdminProducts = () => {
             {isFormOpen && (
                 <div className="admin-modal-overlay">
                     <div className="admin-modal">
-                        <h3>{currentProduct ? 'Editar Producto' : 'Nuevo Producto'}</h3>
+                        <h3>{currentProduct ? 'Editar' : 'Nuevo'}</h3>
                         <form onSubmit={handleFormSubmit} className="product-form">
-                            
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label>Nombre</label>
-                                    <input value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} required/>
-                                </div>
-                                <div className="form-group">
-                                    <label>Precio</label>
-                                    <input type="number" value={formData.price} onChange={e=>setFormData({...formData, price:Number(e.target.value)})} required/>
-                                </div>
+                                <div className="form-group"><label>Nombre</label><input value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} required/></div>
+                                <div className="form-group"><label>Precio</label><input type="number" value={formData.price} onChange={e=>setFormData({...formData, price:Number(e.target.value)})} required/></div>
                             </div>
-
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label>Categoría</label>
-                                    <input value={formData.category} onChange={e=>setFormData({...formData, category:e.target.value})} required/>
-                                </div>
-                                <div className="form-group">
-                                    <label>Imagen</label>
-                                    {/* INPUT TIPO FILE PARA SUBIR IMAGEN */}
-                                    <input 
-                                        type="file" 
-                                        accept="image/*"
-                                        onChange={e => setFormData({...formData, imageFile: e.target.files[0]})}
-                                    />
-                                    {currentProduct && <small style={{color:'#aaa', fontSize:'0.8em'}}>Deja vacío para mantener la imagen actual</small>}
-                                </div>
+                                <div className="form-group"><label>Categoría</label><input value={formData.category} onChange={e=>setFormData({...formData, category:e.target.value})} required/></div>
+                                <div className="form-group"><label>Imagen</label><input type="file" accept="image/*" onChange={e => setFormData({...formData, imageFile: e.target.files[0]})}/></div>
                             </div>
-
-                            <div className="form-group">
-                                <label>Descripción</label>
-                                <textarea 
-                                    value={formData.description} 
-                                    onChange={e=>setFormData({...formData, description:e.target.value})} 
-                                    rows="3"
-                                />
-                            </div>
-
+                            <div className="form-group"><label>Descripción</label><textarea value={formData.description} onChange={e=>setFormData({...formData, description:e.target.value})} rows="3"/></div>
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label>Fabricante</label>
-                                    <input value={formData.manufacturer} onChange={e=>setFormData({...formData, manufacturer:e.target.value})} />
-                                </div>
-                                <div className="form-group">
-                                    <label>Distribuidor</label>
-                                    <input value={formData.distributor} onChange={e=>setFormData({...formData, distributor:e.target.value})} />
-                                </div>
+                                <div className="form-group"><label>Fabricante</label><input value={formData.manufacturer} onChange={e=>setFormData({...formData, manufacturer:e.target.value})}/></div>
+                                <div className="form-group"><label>Distribuidor</label><input value={formData.distributor} onChange={e=>setFormData({...formData, distributor:e.target.value})}/></div>
                             </div>
-
                             <div className="modal-actions">
                                 <button type="button" className="btn-secondary-admin" onClick={()=>setIsFormOpen(false)}>Cancelar</button>
                                 <button type="submit" className="btn-primary-admin">Guardar</button>
@@ -329,18 +388,18 @@ const AdminProducts = () => {
     );
 };
 
-// --- COMPONENTE PRINCIPAL (LAYOUT) ---
+// ==========================================
+// 5. COMPONENTE PRINCIPAL (LAYOUT)
+// ==========================================
 const AdminDashboard = () => {
     const [activeView, setActiveView] = useState('overview'); 
     const navigate = useNavigate();
     const { logout, user } = useAuth();
 
-    // Redirección si no es admin
     useEffect(() => {
         if (user && user.userRole !== 'ROLE_ADMIN') navigate('/');
     }, [user, navigate]);
 
-    // Si no está cargado el usuario o no es admin, no renderizar nada (o un loader)
     if (!user || user.userRole !== 'ROLE_ADMIN') return null; 
 
     return (
@@ -349,12 +408,9 @@ const AdminDashboard = () => {
                 <div className="sidebar-brand"><h2>Admin<span>Panel</span></h2></div>
                 <nav className="admin-nav">
                     <ul>
-                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>
-                            📊 Dashboard
-                        </li>
-                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>
-                            📦 Productos
-                        </li>
+                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>📊 Dashboard</li>
+                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>📦 Productos</li>
+                        <li className={activeView === 'users' ? 'active' : ''} onClick={() => setActiveView('users')}>👥 Usuarios</li>
                     </ul>
                 </nav>
                 <div className="sidebar-footer">
@@ -364,7 +420,9 @@ const AdminDashboard = () => {
             </aside>
             <main className="admin-main">
                 <header className="top-bar">
-                    <div className="breadcrumbs">Admin / {activeView === 'overview' ? 'Resumen' : 'Productos'}</div>
+                    <div className="breadcrumbs">
+                        Admin / {activeView === 'overview' ? 'Resumen' : activeView === 'products' ? 'Productos' : 'Usuarios'}
+                    </div>
                     <div className="admin-profile">
                         <span>{user.username}</span>
                         <div className="admin-avatar">{user.username.charAt(0).toUpperCase()}</div>
@@ -373,6 +431,7 @@ const AdminDashboard = () => {
                 <div className="content-wrapper">
                     {activeView === 'overview' && <AdminOverview />}
                     {activeView === 'products' && <AdminProducts />}
+                    {activeView === 'users' && <AdminUsers />}
                 </div>
             </main>
         </div>
