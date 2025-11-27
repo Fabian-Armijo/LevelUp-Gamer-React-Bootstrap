@@ -5,7 +5,7 @@ import AdminService from '../../../Services/AdminService';
 import { useAuth } from '../../../context/AuthContext';
 import './AdminDashboard.css';
 
-// --- SUB-COMPONENTE: GRÁFICO ---
+// --- SUB-COMPONENTE: GRÁFICO DE BARRAS ---
 const SimpleBarChart = ({ data, label }) => {
     const maxVal = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1;
     return (
@@ -27,12 +27,12 @@ const SimpleBarChart = ({ data, label }) => {
     );
 };
 
-// --- SUB-COMPONENTE: VISTA GENERAL ---
+// --- SUB-COMPONENTE: VISTA GENERAL (STATS) ---
 const AdminOverview = () => {
     const [backendStats, setBackendStats] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { logout } = useAuth(); // Necesitamos logout para el error 403
+    const { logout } = useAuth(); 
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -49,9 +49,8 @@ const AdminOverview = () => {
             console.error("Error al cargar estadísticas:", err);
             setIsLoading(false);
             
-            // MANEJO DE ERROR 403 ESPECÍFICO
             if (err.response && err.response.status === 403) {
-                setError("FORBIDDEN"); // Marcador especial
+                setError("FORBIDDEN");
             } else {
                 setError("No se pudieron cargar los datos. Revisa que el backend esté corriendo.");
             }
@@ -65,19 +64,14 @@ const AdminOverview = () => {
 
     if (isLoading) return <div className="p-4">Cargando estadísticas...</div>;
 
-    // UI ESPECIAL PARA ERROR 403
     if (error === "FORBIDDEN") {
         return (
             <div className="admin-view fade-in">
                 <div className="server-message error" style={{ textAlign: 'center', padding: '40px' }}>
                     <h2 style={{ color: '#ff4d4d', marginBottom: '10px' }}>⛔ Acceso Denegado (403)</h2>
-                    <p style={{ marginBottom: '20px' }}>Tu usuario tiene permiso en el Frontend, pero el Backend lo rechaza.</p>
-                    <ul style={{ listStyle: 'none', padding: 0, color: '#ccc', marginBottom: '20px' }}>
-                        <li>1. Tu token puede haber expirado.</li>
-                        <li>2. En la base de datos, el rol debe ser exactamente <strong>ROLE_ADMIN</strong>.</li>
-                    </ul>
-                    <button className="btn-primary-admin" onClick={handleForceLogout} style={{ backgroundColor: '#ff4d4d' }}>
-                        Cerrar Sesión y Reintentar
+                    <p>Tu token es válido, pero el servidor rechaza el permiso.</p>
+                    <button className="btn-primary-admin" onClick={handleForceLogout} style={{ backgroundColor: '#ff4d4d', marginTop: '20px' }}>
+                        Recargar Sesión
                     </button>
                 </div>
             </div>
@@ -146,67 +140,183 @@ const AdminOverview = () => {
     );
 };
 
-// --- SUB-COMPONENTE: PRODUCTOS (Sin cambios mayores) ---
+// --- SUB-COMPONENTE: GESTIÓN DE PRODUCTOS (CRUD CON IMÁGENES) ---
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [currentProduct, setCurrentProduct] = useState(null); 
-    const [formData, setFormData] = useState({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '', distributor: '' });
+    const [currentProduct, setCurrentProduct] = useState(null);
+    
+    // Estado inicial del formulario
+    const initialFormState = { 
+        name: '', price: 0, category: '', description: '', 
+        manufacturer: '', distributor: '', 
+        imageFile: null // Para guardar el archivo seleccionado
+    };
+    const [formData, setFormData] = useState(initialFormState);
 
     useEffect(() => { loadProducts(); }, []);
 
     const loadProducts = () => {
         setIsLoading(true);
-        ProductService.getAllProducts().then(res => setProducts(res.data)).finally(() => setIsLoading(false));
+        ProductService.getAllProducts()
+            .then(res => setProducts(res.data))
+            .catch(err => console.error("Error cargando productos", err))
+            .finally(() => setIsLoading(false));
     };
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+        
+        // 1. Crear FormData para envío Multipart
+        const dataToSend = new FormData();
+        dataToSend.append('name', formData.name);
+        dataToSend.append('price', formData.price);
+        dataToSend.append('category', formData.category);
+        dataToSend.append('description', formData.description);
+        dataToSend.append('manufacturer', formData.manufacturer);
+        dataToSend.append('distributor', formData.distributor);
+        
+        // Solo añadimos imagen si existe una nueva seleccionada
+        if (formData.imageFile) {
+            dataToSend.append('image', formData.imageFile);
+        }
+
         try {
-            if (currentProduct) await ProductService.updateProduct(currentProduct.id, formData);
-            else await ProductService.createProduct(formData);
+            if (currentProduct) {
+                // Actualizar
+                await ProductService.updateProduct(currentProduct.id, dataToSend);
+            } else {
+                // Crear
+                await ProductService.createProduct(dataToSend);
+            }
             setIsFormOpen(false);
-            loadProducts();
-        } catch (error) { alert("Error al guardar."); }
+            loadProducts(); // Recargar la lista
+            alert(currentProduct ? "Producto actualizado con éxito" : "Producto creado con éxito");
+        } catch (error) {
+            console.error(error);
+            alert("Hubo un error al guardar. Revisa la consola.");
+        }
     };
 
-    // Funciones auxiliares para el formulario
-    const openCreate = () => { setCurrentProduct(null); setFormData({ name: '', price: 0, category: '', description: '', imageUrl: '', manufacturer: '', distributor: '' }); setIsFormOpen(true); };
-    const openEdit = (p) => { setCurrentProduct(p); setFormData({ ...p, manufacturer: p.manufacturer||'', distributor: p.distributor||'' }); setIsFormOpen(true); };
-    const handleDelete = async (id) => { if(window.confirm("¿Borrar?")) { await ProductService.deleteProduct(id); loadProducts(); } };
+    const openCreate = () => { 
+        setCurrentProduct(null); 
+        setFormData(initialFormState); 
+        setIsFormOpen(true); 
+    };
+
+    const openEdit = (p) => { 
+        setCurrentProduct(p); 
+        setFormData({ 
+            name: p.name, 
+            price: p.price, 
+            category: p.category,
+            description: p.description || '', 
+            manufacturer: p.manufacturer || '', 
+            distributor: p.distributor || '',
+            imageFile: null // Importante: Reiniciar el archivo al editar
+        }); 
+        setIsFormOpen(true); 
+    };
+
+    const handleDelete = async (id) => { 
+        if(window.confirm("¿Estás seguro de que deseas eliminar este producto?")) { 
+            try {
+                await ProductService.deleteProduct(id); 
+                loadProducts(); 
+            } catch (error) {
+                alert("No se pudo eliminar el producto.");
+            }
+        } 
+    };
 
     return (
         <div className="admin-view fade-in">
             <div className="admin-header">
-                <h2>Productos</h2>
-                <button className="btn-primary-admin" onClick={openCreate}>+ Nuevo</button>
+                <h2>Gestión de Productos</h2>
+                <button className="btn-primary-admin" onClick={openCreate}>+ Nuevo Producto</button>
             </div>
+            
             <div className="table-container">
                 <table className="admin-table">
-                    <thead><tr><th>Nombre</th><th>Precio</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Img</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Acciones</th></tr></thead>
                     <tbody>
                         {products.map(p => (
                             <tr key={p.id}>
+                                <td>
+                                    {p.imageUrl ? (
+                                        <img src={p.imageUrl} alt="mini" style={{width:'40px', height:'40px', objectFit:'cover', borderRadius:'4px'}} onError={(e)=>{e.target.style.display='none'}}/>
+                                    ) : (
+                                        <span style={{fontSize:'20px'}}>📦</span>
+                                    )}
+                                </td>
                                 <td>{p.name}</td>
+                                <td>{p.category}</td>
                                 <td>${p.price.toLocaleString('es-CL')}</td>
                                 <td>
-                                    <button className="action-btn edit" onClick={() => openEdit(p)}>✏️</button>
-                                    <button className="action-btn delete" onClick={() => handleDelete(p.id)}>🗑️</button>
+                                    <button className="action-btn edit" onClick={() => openEdit(p)} title="Editar">✏️</button>
+                                    <button className="action-btn delete" onClick={() => handleDelete(p.id)} title="Eliminar">🗑️</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
             {isFormOpen && (
                 <div className="admin-modal-overlay">
                     <div className="admin-modal">
-                        <h3>{currentProduct ? 'Editar' : 'Crear'}</h3>
-                        <form onSubmit={handleFormSubmit}>
-                            <div className="form-group"><label>Nombre</label><input value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} required/></div>
-                            <div className="form-group"><label>Precio</label><input type="number" value={formData.price} onChange={e=>setFormData({...formData, price:Number(e.target.value)})} required/></div>
-                            <div className="form-group"><label>Categoría</label><input value={formData.category} onChange={e=>setFormData({...formData, category:e.target.value})} required/></div>
+                        <h3>{currentProduct ? 'Editar Producto' : 'Nuevo Producto'}</h3>
+                        <form onSubmit={handleFormSubmit} className="product-form">
+                            
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Nombre</label>
+                                    <input value={formData.name} onChange={e=>setFormData({...formData, name:e.target.value})} required/>
+                                </div>
+                                <div className="form-group">
+                                    <label>Precio</label>
+                                    <input type="number" value={formData.price} onChange={e=>setFormData({...formData, price:Number(e.target.value)})} required/>
+                                </div>
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Categoría</label>
+                                    <input value={formData.category} onChange={e=>setFormData({...formData, category:e.target.value})} required/>
+                                </div>
+                                <div className="form-group">
+                                    <label>Imagen</label>
+                                    {/* INPUT TIPO FILE PARA SUBIR IMAGEN */}
+                                    <input 
+                                        type="file" 
+                                        accept="image/*"
+                                        onChange={e => setFormData({...formData, imageFile: e.target.files[0]})}
+                                    />
+                                    {currentProduct && <small style={{color:'#aaa', fontSize:'0.8em'}}>Deja vacío para mantener la imagen actual</small>}
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Descripción</label>
+                                <textarea 
+                                    value={formData.description} 
+                                    onChange={e=>setFormData({...formData, description:e.target.value})} 
+                                    rows="3"
+                                />
+                            </div>
+
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Fabricante</label>
+                                    <input value={formData.manufacturer} onChange={e=>setFormData({...formData, manufacturer:e.target.value})} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Distribuidor</label>
+                                    <input value={formData.distributor} onChange={e=>setFormData({...formData, distributor:e.target.value})} />
+                                </div>
+                            </div>
+
                             <div className="modal-actions">
                                 <button type="button" className="btn-secondary-admin" onClick={()=>setIsFormOpen(false)}>Cancelar</button>
                                 <button type="submit" className="btn-primary-admin">Guardar</button>
@@ -219,16 +329,18 @@ const AdminProducts = () => {
     );
 };
 
-// --- COMPONENTE PRINCIPAL ---
+// --- COMPONENTE PRINCIPAL (LAYOUT) ---
 const AdminDashboard = () => {
     const [activeView, setActiveView] = useState('overview'); 
     const navigate = useNavigate();
     const { logout, user } = useAuth();
 
+    // Redirección si no es admin
     useEffect(() => {
         if (user && user.userRole !== 'ROLE_ADMIN') navigate('/');
     }, [user, navigate]);
 
+    // Si no está cargado el usuario o no es admin, no renderizar nada (o un loader)
     if (!user || user.userRole !== 'ROLE_ADMIN') return null; 
 
     return (
@@ -237,8 +349,12 @@ const AdminDashboard = () => {
                 <div className="sidebar-brand"><h2>Admin<span>Panel</span></h2></div>
                 <nav className="admin-nav">
                     <ul>
-                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>📊 Dashboard</li>
-                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>📦 Productos</li>
+                        <li className={activeView === 'overview' ? 'active' : ''} onClick={() => setActiveView('overview')}>
+                            📊 Dashboard
+                        </li>
+                        <li className={activeView === 'products' ? 'active' : ''} onClick={() => setActiveView('products')}>
+                            📦 Productos
+                        </li>
                     </ul>
                 </nav>
                 <div className="sidebar-footer">
@@ -248,8 +364,11 @@ const AdminDashboard = () => {
             </aside>
             <main className="admin-main">
                 <header className="top-bar">
-                    <div className="breadcrumbs">Admin / {activeView}</div>
-                    <div className="admin-profile"><span>{user.username}</span><div className="admin-avatar">A</div></div>
+                    <div className="breadcrumbs">Admin / {activeView === 'overview' ? 'Resumen' : 'Productos'}</div>
+                    <div className="admin-profile">
+                        <span>{user.username}</span>
+                        <div className="admin-avatar">{user.username.charAt(0).toUpperCase()}</div>
+                    </div>
                 </header>
                 <div className="content-wrapper">
                     {activeView === 'overview' && <AdminOverview />}
