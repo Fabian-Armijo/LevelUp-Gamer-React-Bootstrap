@@ -31,10 +31,9 @@ body {
 /* Aplicar la fuente de encabezado a todos los títulos */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-header);
-  color: var(--color-primary-accent); /* Usemos el azul para los títulos, por ejemplo */
+  color: var(--color-primary-accent);
 }
 
-/* Un estilo para el texto secundario */
 p, span {
     color: var(--color-text-secondary);
 }

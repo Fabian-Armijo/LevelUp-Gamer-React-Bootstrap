@@ -8,7 +8,6 @@ import CartPage from './Components/pages/CartPage';
 import Footer from './Components/organisms/Footer/Footer';
 import ProfilePage from './Components/pages/ProfilePage/ProfilePage';
 import RewardsPage from './Components/pages/RewardsPage';
-// --- 1. IMPORTA EL DASHBOARD DE ADMIN ---
 import AdminDashboard from './Components/pages/AdminDashboard/AdminDashboard'; 
 
 import { AuthProvider } from './context/AuthContext'; 
@@ -18,7 +17,6 @@ import './App.css';
 
 const AppLayout = () => {
   const location = useLocation();
-  // Ocultamos el footer también en el dashboard de admin para tener más espacio
   const isAuthPage = location.pathname === '/login' || location.pathname === '/registro';
   const isAdminPage = location.pathname.startsWith('/admin');
   
@@ -56,8 +54,6 @@ const AppLayout = () => {
         <Route path="/recompensas" element={<ProtectedRoute><RewardsPage /></ProtectedRoute>} />
 
         {/* --- 2. RUTA DEL ADMIN DASHBOARD --- */}
-        {/* Protegida por ProtectedRoute para asegurar que haya usuario logueado.
-            El propio componente AdminDashboard verifica si es ROLE_ADMIN. */}
         <Route 
           path="/admin/dashboard" 
           element={
