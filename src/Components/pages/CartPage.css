@@ -1,16 +1,14 @@
-/* Contenedor principal de la página del carrito */
 .cart-page {
   width: 90%;
   max-width: 1200px;
   margin: 40px auto;
-  background-color: #1a1a1a; /* Fondo de contenedor oscuro */
+  background-color: #1a1a1a;
   padding: 20px 30px;
   border-radius: 10px;
-  border: 1px solid var(--color-primary-accent); /* Borde Azul Eléctrico */
+  border: 1px solid var(--color-primary-accent);
   box-shadow: 0 4px 25px rgba(30, 144, 255, 0.1);
 }
 
-/* Título de la página (usando tu fuente de encabezado) */
 .cart-page h2 {
   font-family: var(--font-header), 'Orbitron', sans-serif;
   color: var(--color-primary-accent);
@@ -20,16 +18,13 @@
   font-size: 2.2rem;
 }
 
-/* --- ESTILOS DE LA TABLA DEL CARRITO --- */
-
-/* Contenedor de la tabla para responsividad */
 .cart-table-container {
-  overflow-x: auto; /* Permite scroll horizontal en móviles */
+  overflow-x: auto; 
 }
 
 .cart-page table {
   width: 100%;
-  border-collapse: collapse; /* Bordes limpios */
+  border-collapse: collapse; 
   background-color: transparent;
 }
 
@@ -51,12 +46,9 @@
   vertical-align: middle;
   text-align: center;
   padding: 20px 10px;
-  border-top: 1px solid #2a2a2a; /* Separador de fila sutil */
+  border-top: 1px solid #2a2a2a; 
 }
 
-/* --- CELDAS ESPECIALES --- */
-
-/* Celda de la imagen del producto */
 .cart-page .product-image {
   width: 80px;
   height: 80px;
@@ -64,22 +56,18 @@
   border-radius: 5px;
 }
 
-/* Celda del nombre del producto */
 .cart-page .product-name {
   color: var(--color-text-primary);
   font-weight: bold;
   font-size: 1.1rem;
 }
 
-/* Celda del precio (con acento verde neón) */
 .cart-page .product-price {
   font-family: var(--font-header), 'Orbitron', sans-serif;
   color: var(--color-secondary-accent);
   font-weight: bold;
   font-size: 1.1rem;
 }
-
-/* --- CONTROLES DE CANTIDAD --- */
 
 .quantity-controls {
   display: flex;
@@ -88,7 +76,6 @@
   gap: 10px;
 }
 
-/* Botones de +/- */
 .quantity-controls button {
   background: transparent;
   border: 1px solid var(--color-primary-accent);

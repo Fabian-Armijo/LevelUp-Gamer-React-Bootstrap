@@ -6,9 +6,7 @@ import CartService from '../../../services/CartService';
 import ReviewsSection from '../../organisms/ReviewsSection/ReviewsSection';
 import { Button } from 'react-bootstrap';
 import './ProductDetailPage.css';
-import { useAuth } from '../../../context/AuthContext'; // <-- 1. IMPORTA EL "CEREBRO"
-
-// const isDuocUser = true; // <-- 2. BORRA esta línea harcodeada
+import { useAuth } from '../../../context/AuthContext';
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
@@ -17,11 +15,8 @@ const ProductDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // --- 3. OBTÉN EL USUARIO DEL CONTEXTO ---
-  // 'user' será 'null' si no está logueado, o el objeto de usuario si lo está
   const { user } = useAuth();
 
-  // useEffect (para cargar el producto) no cambia, está perfecto
   useEffect(() => {
     setIsLoading(true);
     setError(false);
@@ -38,7 +33,6 @@ const ProductDetailPage = () => {
       });
   }, [productId]);
 
-  // handleReviewSubmit no cambia, está perfecto
   const handleReviewSubmit = async (reviewData) => {
     try {
       const response = await ProductService.addReviewToProduct(productId, reviewData);
@@ -53,7 +47,6 @@ const ProductDetailPage = () => {
     }
   };
 
-  // Los 'return' de Carga y Error no cambian, están perfectos
   if (isLoading) {
     return (
       <>
@@ -77,26 +70,18 @@ const ProductDetailPage = () => {
     );
   }
 
-  // --- 4. LÓGICA DE PRECIOS Y PUNTOS (AHORA ES DINÁMICA) ---
   const numericPrice = product.price;
 
-  // 'isDuoc' ahora se calcula dinámicamente
   const isDuoc = user && user.userRole === "ROLE_DUOC";
 
-  // Calcula el precio final
   let finalPrice = numericPrice;
   if (isDuoc) {
-    finalPrice = numericPrice * 0.80; // Aplica el 20% de descuento
+    finalPrice = numericPrice * 0.80;
   }
 
-  // Calcula los puntos basados en el precio final
   const levelUpPoints = Math.floor(finalPrice / 1000) * 10;
-  // --- FIN DE LA LÓGICA ---
 
-
-  // handleAddToCart no cambia, está perfecto
   const handleAddToCart = async () => { 
-    // ... (tu lógica actual está bien, ya comprueba el token)
     const token = localStorage.getItem('token');
     if (!token) {
       alert("Debes iniciar sesión para añadir productos al carrito.");
@@ -133,36 +118,29 @@ const ProductDetailPage = () => {
               <p><strong>Distribuidor:</strong> {product.distributor}</p>
             </div>
 
-           {/* --- 5. RENDERIZADO DE PRECIO (Corregido) --- */}
             <div className="product-detail-price-container">
               {isDuoc ? (
-                // Si es Duoc, muestra ambos precios
                 <>
                   <p className="product-detail-price-original">
                     Precio: {numericPrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
                   </p>
                   <p className="product-detail-price-duoc">
                     Precio Duoc: {finalPrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
-                    {/* ¡LA CORRECCIÓN! El 'span' debe estar separado */}
                     <span className="discount-badge">20% OFF</span>
                   </p>
                 </>
               ) : (
-                // Si no, muestra el precio normal
                 <p className="product-detail-price">
                   {numericPrice.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
                 </p>
               )}
             </div>
-            {/* --- FIN DEL CAMBIO DE PRECIO --- */}
 
 
             <Button variant="primary" className="add-to-cart-btn" onClick={handleAddToCart}>
               Añadir al Carrito
             </Button>
 
-            {/* --- 6. RENDERIZADO DE PUNTOS (AHORA CONDICIONAL) --- */}
-            {/* Ahora solo se muestra si 'isDuoc' es 'true' */}
             {isDuoc && (
               <div className="levelup-perk mt-3">
                 <p>
@@ -170,7 +148,6 @@ const ProductDetailPage = () => {
                 </p>
               </div>
             )}
-            {/* --- FIN DEL CAMBIO DE PUNTOS --- */}
 
           </div>
         </div>

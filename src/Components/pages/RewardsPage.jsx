@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from 'react'; // <-- 1. Importa useMemo
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import RewardsService from '../../Services/RewardsService';
 import Header from '../organisms/Header/Header';
 import { Button } from 'react-bootstrap';
 
 
-// Define tus recompensas
 const REWARDS = [
     { id: 1, name: "Catan", cost: 30000, level: 1, imageUrl: "https://devirinvestments.s3.eu-west-1.amazonaws.com/img/catalog/product/8436017220100-1200-face3d.jpg" },
     { id: 2, name: "Carcassonne", cost: 30000, level: 1, imageUrl: "https://devirinvestments.s3.eu-west-1.amazonaws.com/img/catalog/product/8436017222593-1200-frontflat-copy.jpg" },
@@ -16,17 +15,14 @@ const REWARDS = [
     { id: 7, name: "Silla Gamer Secretlab Titan", cost: 100000, level: 4, imageUrl: "https://images.secretlab.co/turntable/tr:n-w_750/R22PU-Stealth_02.jpg" },
 ];
 
-// 2. Define las categorías de Nivel
 const levelCategories = ['Todos', 'Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'];
 
 const RewardsPage = () => {
     const { user, refreshUser } = useAuth(); 
     const [message, setMessage] = useState('');
     
-    // 3. Añade estado para el filtro activo
     const [activeFilter, setActiveFilter] = useState('Todos');
 
-    // 4. Lógica de 'handleRedeem' (sin cambios)
     const handleRedeem = async (reward) => {
         setMessage('');
         if (!window.confirm(`¿Canjear ${reward.name} por ${reward.cost.toLocaleString('es-CL')} puntos?`)) return;
@@ -39,17 +35,14 @@ const RewardsPage = () => {
         }
     };
 
-    // 5. 'useMemo' para filtrar las recompensas
     const filteredRewards = useMemo(() => {
         if (activeFilter === 'Todos') {
             return REWARDS; 
         }
-        // Extrae el número del string (ej: "Nivel 1" -> 1)
         const level = parseInt(activeFilter.replace('Nivel ', ''));
         return REWARDS.filter(r => r.level === level);
     }, [activeFilter]);
 
-    // 6. Guardia de Duoc (sin cambios)
     if (!user || user.userRole !== "ROLE_DUOC") {
         return (
             <div>
@@ -77,11 +70,8 @@ const RewardsPage = () => {
                     </div>
                 )}
 
-                {/* --- 7. ¡NUEVA ESTRUCTURA DE LAYOUT! --- */}
-                {/* (Clase copiada de tu ProductCatalog.css) */}
                 <section className="catalog-section">
 
-                    {/* Barra Lateral de Filtros */}
                     <aside className="filter-sidebar">
                         <h3 className="filter-title">Niveles</h3>
                         <ul>
@@ -90,7 +80,6 @@ const RewardsPage = () => {
                                     <button 
                                         className={activeFilter === level ? 'active' : ''}
                                         onClick={() => setActiveFilter(level)}
-                                        // Deshabilita el botón si el usuario no tiene el nivel
                                         disabled={user.userLevel < parseInt(level.replace('Nivel ', '') || 0)}
                                     >
                                         {level}
@@ -100,7 +89,6 @@ const RewardsPage = () => {
                         </ul>
                     </aside>
 
-                    {/* Cuadrícula de Recompensas (como tu catálogo) */}
                     <div className="product-grid"> 
                         {filteredRewards.map(reward => {
                             const canAfford = user.pointsBalance >= reward.cost;
@@ -135,9 +123,9 @@ const RewardsPage = () => {
                                 </div>
                             );
                         })}
-                    </div> {/* Fin de product-grid */}
+                    </div> 
 
-                </section> {/* Fin de catalog-section */}
+                </section> 
 
             </main>
         </div>

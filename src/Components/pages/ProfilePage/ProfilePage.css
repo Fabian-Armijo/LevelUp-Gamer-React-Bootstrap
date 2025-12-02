@@ -85,36 +85,31 @@
   margin: 0;
 }
 
-/* --- ¡ESTILOS DE RECOMPENSAS (ACTUALIZADOS)! --- */
+/* --- ESTILOS DE RECOMPENSAS --- */
 .rewards-section {
   background-color: rgba(30, 144, 255, 0.05);
   border: 1px solid var(--color-primary-accent);
 }
 
-/* ¡NUEVO! Contenedor para el título H2 y el botón */
+/* Contenedor para el título H2 y el botón */
 .rewards-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Copia los estilos de .profile-section h2 para mantener la consistencia */
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #333;
 }
 
-/* ¡ACTUALIZADO! El H2 dentro del header de recompensas */
+/* El H2 dentro del header de recompensas */
 .rewards-header h2 {
   font-family: var(--font-header);
   font-size: 1.5rem;
   color: var(--color-primary-accent);
-  /* Resetea los márgenes para que 'flex' lo alinee bien */
   margin: 0; 
   padding: 0;
   border: none;
 }
-/* (La regla .rewards-section h2 que tenías ya no es necesaria
-   si tu único H2 está dentro del .rewards-header) */
-
 
 .profile-rewards-grid {
   display: grid;
@@ -157,7 +152,7 @@
 }
 /* Estilo para la etiqueta de texto DENTRO de la barra */
 .progress-bar {
-  color: #111 !important; /* Texto oscuro para que contraste */
+  color: #111 !important;
   background-color: var(--color-primary-accent) !important;
 }
 .progress-bar.bg-success {
@@ -218,7 +213,7 @@
     border: 1px solid #333;
     border-radius: 8px;
     padding: 30px 20px;
-    height: fit-content; /* Se ajusta al contenido */
+    height: fit-content;
 }
 
 .sidebar-user-summary {
@@ -287,13 +282,13 @@
 
 .nav-item.active {
     background-color: var(--color-primary-accent);
-    color: #000; /* Texto negro sobre acento brillante */
+    color: #000;
     font-weight: 700;
 }
 
 /* -- CONTENIDO PRINCIPAL -- */
 .dashboard-content {
-    flex: 3; /* Ocupa 3 veces más espacio que el sidebar */
+    flex: 3; 
     min-width: 300px;
 }
 

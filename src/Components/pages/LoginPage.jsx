@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginForm from '../organisms/LoginForm/LoginForm';
 import miLogo from '../../assets/imagenes/logo/logo.png';
-import './LoginPage.css'; // Asegúrate de importar el CSS
+import './LoginPage.css';
 
 const AuthPanel = ({ title, slogan }) => (
   <div className="auth-panel">
@@ -20,10 +20,7 @@ const LoginPage = () => {
   };
 
   return (
-    // 1. Contenedor Padre para CENTRAR todo
     <div className="login-page-container">
-      
-      {/* 2. Tu tarjeta de diseño dividido (Split) */}
       <div className="auth-split-container">
         <AuthPanel
           title="Bienvenido de Nuevo"

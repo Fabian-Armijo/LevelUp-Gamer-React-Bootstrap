@@ -7,19 +7,13 @@ import { ProgressBar } from 'react-bootstrap';
 import './ProfilePage.css';
 import ProfileService from '../../../services/ProfileService';
 import { useAuth } from '../../../context/AuthContext';
-// Asegúrate de que este componente exista, si no, comenta esta línea
 import OrderHistory from '../../molecules/OrderHistory/OrderHistory'; 
 
 const ProfilePage = () => {
     const navigate = useNavigate();
-    // Obtiene la función refreshUser del contexto para actualizar los datos globales
     const { refreshUser } = useAuth(); 
-
-    // --- Estado para Pestañas (Sidebar) ---
-    // Valores posibles: 'profile', 'orders', 'dashboard'
     const [activeTab, setActiveTab] = useState('profile'); 
 
-    // --- Estado del Usuario ---
     const [userInfo, setUserInfo] = useState({
         username: '',
         email: '',
@@ -34,7 +28,6 @@ const ProfilePage = () => {
         totalPointsEarned: 0 
     });
 
-    // --- Estados de UI ---
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +35,6 @@ const ProfilePage = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const fileInputRef = useRef(null);
 
-    // --- Carga Inicial ---
     useEffect(() => {
         setIsLoading(true);
         ProfileService.getMyProfile()
@@ -57,7 +49,6 @@ const ProfilePage = () => {
                     username,
                     email,
                     receiveNotifications,
-                    // Añade un timestamp para evitar caché al actualizar la foto
                     profilePictureUrl: profilePictureUrl ? `${profilePictureUrl}?t=${Date.now()}` : '',
                     userRole: userRole || 'ROLE_USER',
                     pointsBalance: pointsBalance || 0,
@@ -73,8 +64,6 @@ const ProfilePage = () => {
                 setIsLoading(false);
             });
     }, []);
-
-    // --- Manejadores ---
 
     const handleGoToRewards = () => {
         navigate('/recompensas');
@@ -100,7 +89,6 @@ const ProfilePage = () => {
         if (userInfo.username.length < 4) newErrors.username = 'El nombre de usuario debe tener al menos 4 caracteres.';
         if (!emailRegex.test(userInfo.email)) newErrors.email = 'Por favor, introduce un correo válido.';
         
-        // Validación de Contraseña
         if (userInfo.newPassword || userInfo.confirmPassword) {
             if (!userInfo.currentPassword) newErrors.currentPassword = 'Debes ingresar tu contraseña actual para cambiarla.';
             if (userInfo.newPassword.length < 6) newErrors.newPassword = 'La nueva contraseña debe tener al menos 6 caracteres.';
@@ -119,11 +107,10 @@ const ProfilePage = () => {
         setServerMessage({ type: '', text: '' });
         try {
             const response = await ProfileService.uploadProfilePicture(selectedFile);
-            // Bypassear caché
             const newUrlWithCacheBust = `${response.data.profilePictureUrl}?t=${Date.now()}`;
             
             setUserInfo(prev => ({ ...prev, profilePictureUrl: newUrlWithCacheBust }));
-            await refreshUser(); // Actualiza el contexto
+            await refreshUser();
 
             setServerMessage({ type: 'success', text: '¡Foto de perfil actualizada!' });
             setSelectedFile(null);
@@ -162,10 +149,9 @@ const ProfilePage = () => {
 
         try {
             await Promise.all(tasks);
-            await refreshUser(); // Actualiza el contexto global
+            await refreshUser();
             setServerMessage({ type: 'success', text: '¡Perfil actualizado con éxito!' });
             setIsEditing(false); 
-            // Limpia campos de contraseña después del éxito
             setUserInfo(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
         } catch (error) {
             console.error('Error al actualizar:', error);
@@ -176,7 +162,6 @@ const ProfilePage = () => {
         }
     };
 
-    // --- Lógica de Progreso ---
     const currentLevel = userInfo.userLevel;
     const currentPoints = userInfo.totalPointsEarned; 
     const LEVEL_GOALS = { 1: 50000, 2: 100000, 3: 150000, 4: 150000 };
@@ -189,7 +174,6 @@ const ProfilePage = () => {
         const startPoints = LEVEL_START_POINTS[currentLevel];
         const goalPoints = LEVEL_GOALS[currentLevel];
         const pointsInCurrentLevel = currentPoints - startPoints;
-        // Puntos necesarios en el nivel actual para avanzar
         const pointsNeededForLevel = goalPoints - startPoints;
         const calculatedPercent = (pointsInCurrentLevel / pointsNeededForLevel) * 100;
         
@@ -205,22 +189,17 @@ const ProfilePage = () => {
         return <div><Header /><div className="container mt-5"><h2>Cargando...</h2></div></div>;
     }
 
-    // Determinar si el usuario es administrador
     const isAdmin = userInfo.userRole === 'ROLE_ADMIN';
 
-    // Función simple para navegar al dashboard si se hace clic en el botón de contenido
     const handleGoToAdminDashboard = () => {
-        // En una app real, esta ruta podría ser una página separada
         navigate('/admin/dashboard');
     };
-
 
     return (
         <div className="profile-page-wrapper">
             <Header />
             
             <div className="dashboard-container">
-                {/* --- 1. BARRA LATERAL (SIDEBAR) --- */}
                 <aside className="dashboard-sidebar">
                     <div className="sidebar-user-summary">
                         <div className="sidebar-avatar">
@@ -239,7 +218,6 @@ const ProfilePage = () => {
                     </div>
 
                     <nav className="sidebar-nav">
-                        {/* BOTÓN DASHBOARD ADMIN (SOLO VISIBLE PARA ADMIN) */}
                         {isAdmin && (
                             <button 
                                 className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -263,13 +241,11 @@ const ProfilePage = () => {
                     </nav>
                 </aside>
 
-                {/* --- 2. CONTENIDO PRINCIPAL --- */}
                 <main className="dashboard-content">
                     {serverMessage.text && (
                         <div className={`server-message ${serverMessage.type} mb-4`}>{serverMessage.text}</div>
                     )}
 
-                    {/* PESTAÑA: DASHBOARD ADMIN */}
                     {activeTab === 'dashboard' && isAdmin ? (
                         <div className="admin-dashboard-content">
                             <h1 className="profile-title">Panel de Administración</h1>
@@ -286,17 +262,14 @@ const ProfilePage = () => {
                             </section>
                         </div>
                     ) : activeTab === 'orders' ? (
-                        /* PESTAÑA: MIS COMPRAS */
                         <div className="orders-tab-content">
                              <h1 className="profile-title">Historial de Compras</h1>
                              <OrderHistory /> 
                         </div>
                     ) : (
-                        // PESTAÑA: MI PERFIL (activeTab === 'profile')
                         <div className="profile-tab-content">
                             <h1 className="profile-title">Mi Perfil</h1>
 
-                            {/* A. SECCIÓN RECOMPENSAS (Solo Duoc) */}
                             {userInfo.userRole === 'ROLE_DUOC' && (
                                 <section className="profile-section rewards-section mb-4">
                                     <div className="rewards-header">
@@ -328,7 +301,6 @@ const ProfilePage = () => {
                                 </section>
                             )}
 
-                            {/* B. FORMULARIO DE INFORMACIÓN PERSONAL */}
                             <form className="profile-form" onSubmit={handleSubmit} noValidate>
                                 <section className="profile-section mb-4">
                                     <h2>Información Personal</h2>
@@ -351,7 +323,6 @@ const ProfilePage = () => {
                                         error={errors.email} 
                                     />
 
-                                    {/* Subida de Foto (Solo visible al editar) */}
                                     {isEditing && (
                                         <div className="mt-4 pt-3 border-top border-secondary">
                                             <label className="form-label">Cambiar Foto de Perfil</label>
@@ -372,7 +343,6 @@ const ProfilePage = () => {
                                     )}
                                 </section>
 
-                                {/* C. SECCIÓN CONTRASEÑA (Solo visible al editar) */}
                                 {isEditing && (
                                     <section className="profile-section mb-4">
                                         <h2>Cambiar Contraseña</h2>
@@ -383,7 +353,6 @@ const ProfilePage = () => {
                                     </section>
                                 )}
 
-                                {/* D. SECCIÓN PREFERENCIAS */}
                                 <section className="profile-section mb-4">
                                     <h2>Preferencias</h2>
                                     <div className="checkbox-field">
@@ -401,7 +370,6 @@ const ProfilePage = () => {
                                     </div>
                                 </section>
                                 
-                                {/* E. BOTONES DE ACCIÓN */}
                                 <div className="profile-actions d-flex justify-content-end gap-2">
                                     {isEditing ? (
                                         <>

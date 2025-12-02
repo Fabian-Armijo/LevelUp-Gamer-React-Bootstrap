@@ -5,9 +5,6 @@ import AdminService from '../../../Services/AdminService';
 import { useAuth } from '../../../context/AuthContext';
 import './AdminDashboard.css';
 
-// ==========================================
-// 1. SUB-COMPONENTE: GRÁFICO DE BARRAS
-// ==========================================
 const SimpleBarChart = ({ data, label }) => {
     const maxVal = data.length > 0 ? Math.max(...data.map(d => d.value)) : 1;
     return (
@@ -29,9 +26,6 @@ const SimpleBarChart = ({ data, label }) => {
     );
 };
 
-// ==========================================
-// 2. SUB-COMPONENTE: VISTA GENERAL (STATS)
-// ==========================================
 const AdminOverview = () => {
     const [backendStats, setBackendStats] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -132,7 +126,6 @@ const AdminOverview = () => {
                                     <tr key={order.id}>
                                         <td>#{order.id}</td>
                                         <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                                        {/* CORRECCIÓN: Usamos finalPrice en lugar de totalAmount */}
                                         <td>${(order.finalPrice || 0).toLocaleString('es-CL')}</td>
                                     </tr>
                                 ))
@@ -145,9 +138,6 @@ const AdminOverview = () => {
     );
 };
 
-// ==========================================
-// 3. SUB-COMPONENTE: GESTIÓN DE USUARIOS
-// ==========================================
 const AdminUsers = () => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -169,7 +159,6 @@ const AdminUsers = () => {
         if (window.confirm(`¿Estás seguro de que deseas ${action} a ${user.username}?`)) {
             try {
                 await AdminService.toggleUserBan(user.id);
-                // Actualizamos la lista localmente
                 setUsers(users.map(u => 
                     u.id === user.id ? { ...u, locked: !u.locked } : u
                 ));
@@ -244,9 +233,6 @@ const AdminUsers = () => {
     );
 };
 
-// ==========================================
-// 4. SUB-COMPONENTE: GESTIÓN DE PRODUCTOS
-// ==========================================
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -388,9 +374,6 @@ const AdminProducts = () => {
     );
 };
 
-// ==========================================
-// 5. COMPONENTE PRINCIPAL (LAYOUT)
-// ==========================================
 const AdminDashboard = () => {
     const [activeView, setActiveView] = useState('overview'); 
     const navigate = useNavigate();
