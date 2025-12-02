@@ -1,4 +1,4 @@
-import api from './api'; // Asegúrate de importar tu interceptor con token
+import api from './api';
 
 const BASE_URL = 'http://localhost:8081/api/orders';
 
@@ -15,7 +15,6 @@ class OrderService {
     /**
      * Obtiene el historial de pedidos del usuario logueado
      * GET /api/orders/my-orders
-     * (Este es el método que te faltaba)
      */
     getMyOrders() {
         return api.get(`${BASE_URL}/my-orders`);

@@ -1,14 +1,11 @@
 import axios from 'axios';
 
-// Creamos una instancia de Axios
 const api = axios.create();
 
-// ¡LA MAGIA! Esto se ejecuta ANTES de CUALQUIER petición
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     
-    // AGREGA ESTO PARA VERIFICAR EN CONSOLA
     console.log("Interceptor activado para:", config.url);
     console.log("Token recuperado del storage:", token);
 
@@ -22,7 +19,6 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    // Si hay un error, rechaza la promesa
     return Promise.reject(error);
   }
 );
