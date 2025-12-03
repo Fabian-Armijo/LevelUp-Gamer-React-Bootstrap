@@ -1,6 +1,6 @@
 .navigation {
   position: relative;
-  flex-grow: 1; /* Ocupa el espacio restante en el header */
+  flex-grow: 1; 
 }
 
 .hamburger-button {
@@ -20,7 +20,6 @@
   width: 100%;
 }
 
-/* Estilos base para botones y links de navegación */
 .nav-links a,
 .nav-links button {
   font-family: var(--font-header);
@@ -39,7 +38,6 @@
   appearance: none;
 }
 
-/* Hover para botones y links */
 .nav-links a:hover,
 .nav-links button:hover {
   color: var(--color-secondary-accent);
@@ -51,7 +49,6 @@
   border-bottom-color: var(--color-secondary-accent);
 }
 
-/* Estilos del Carrito */
 .cart-link {
   position: relative;
   font-size: 1.8rem;
@@ -85,23 +82,15 @@
   font-weight: bold;
 }
 
-/* ---
-  ¡LA SECCIÓN CRÍTICA!
---- */
-
-/* Contenedor para los botones de acción (Perfil, Carrito, Login, etc.) */
 .nav-actions-group {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-left: auto; /* ¡Empuja todo este grupo a la derecha! */
+  margin-left: auto;
 }
 
-/* 1. El Contenedor (Padre/Ancla)
-   ¡La clave es 'position: relative;'!
-*/
 .nav-profile-link {
-  position: relative !important; /* ¡TIENE que ser el ancla! */
+  position: relative !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,7 +107,6 @@
   border-bottom-color: transparent !important;
 }
 
-/* 2. La Foto (Hijo) */
 .header-profile-pic {
   height: 38px;
   width: 38px;
@@ -131,30 +119,24 @@
   transform: scale(1.1);
 }
 
-/* 3. El Ícono de Fallback (Hijo) */
 .profile-icon {
   font-size: 1.8rem;
   line-height: 1;
 }
 
-/* 4. La Corona (Hijo)
-   ¡La clave es 'position: absolute;'!
-*/
 .level-flair {
-  position: absolute !important; /* ¡Se sale del flujo normal! */
-  top: -10px !important;         /* Posición vertical */
-  right: -10px !important;        /* Posición horizontal */
-  z-index: 3;                   /* Se asegura que esté por encima de la foto */
+  position: absolute !important; 
+  top: -10px !important; 
+  right: -10px !important; 
+  z-index: 3; 
   font-size: 1.2rem;
   text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.7);
 }
 
-
-/* --- ESTILOS RESPONSIVOS --- */
 @media (max-width: 1070px) {
   .hamburger-button {
     display: block;
-    margin-left: auto; /* Empuja el botón hamburguesa a la derecha */
+    margin-left: auto; 
   }
 
   .nav-links {
@@ -176,13 +158,12 @@
     display: flex;
   }
 
-  /* En móvil, resetea el grupo de acciones */
   .nav-actions-group {
     margin-left: 0;
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
-    gap: 0; /* El gap ya lo da .nav-links a */
+    gap: 0; 
   }
 
   .nav-links a,
@@ -194,13 +175,12 @@
     border-bottom: 1px solid transparent;
   }
   
-  /* REGLA RESPONSIVA: No necesita 'position: relative' */
   .nav-profile-link {
     width: 100%;
-    justify-content: flex-start; /* Alinea la foto a la izquierda en móvil */
+    justify-content: flex-start; 
     padding: 10px 0 !important;
-    gap: 10px; /* Espacio entre la foto y el texto "Mi Perfil" (si lo añades) */
-    margin: 0; /* Elimina el margen extra en móvil */
+    gap: 10px; 
+    margin: 0; 
   }
 
   .nav-links a:hover,
@@ -208,7 +188,6 @@
     border-bottom-color: var(--color-secondary-accent);
   }
 
-  /* Oculta la corona en el menú hamburguesa (es demasiado pequeño) */
   .level-flair {
     display: none;
   }

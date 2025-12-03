@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import OrderService from '../../../services/OrderService';
 import Button from '../../atoms/Button/Button';
-import { Spinner, Table, Alert, Modal } from 'react-bootstrap'; // ¡Importamos Modal!
+import { Spinner, Table, Alert, Modal } from 'react-bootstrap';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Estados para el Modal
     const [showModal, setShowModal] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -19,7 +18,6 @@ const OrderHistory = () => {
     const fetchOrders = async () => {
         try {
             const response = await OrderService.getMyOrders();
-            // Ordenamos por fecha descendente
             const sortedOrders = response.data.sort((a, b) => 
                 new Date(b.orderDate) - new Date(a.orderDate)
             );
@@ -32,7 +30,6 @@ const OrderHistory = () => {
         }
     };
 
-    // Funciones para abrir/cerrar el modal
     const handleShowDetails = (order) => {
         setSelectedOrder(order);
         setShowModal(true);
@@ -69,7 +66,6 @@ const OrderHistory = () => {
                         <tbody>
                             {orders.map((order, index) => (
                                 <tr key={order.id}>
-                                    {/* NÚMERO PERSONALIZADO */}
                                     <td>
                                         <span className="fs-5 fw-bold">#{orders.length - index}</span>
                                         <div className="text-muted" style={{ fontSize: '0.75rem' }}>
@@ -108,7 +104,6 @@ const OrderHistory = () => {
                 </div>
             )}
 
-            {/* --- MODAL DE DETALLES --- */}
             <Modal 
                 show={showModal} 
                 onHide={handleCloseModal} 
@@ -142,7 +137,6 @@ const OrderHistory = () => {
                                     {selectedOrder.orderItems.map((item) => (
                                         <tr key={item.id}>
                                             <td>
-                                                {/* Si tienes imagen en el producto, podrías mostrarla aquí */}
                                                 <span className="fw-bold">{item.product.name}</span>
                                             </td>
                                             <td className="text-center">{item.quantity}</td>

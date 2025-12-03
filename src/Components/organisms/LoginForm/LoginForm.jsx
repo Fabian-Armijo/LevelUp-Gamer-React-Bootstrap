@@ -19,7 +19,6 @@ const LoginForm = ({ onLoginSuccess }) => {
   const [serverError, setServerError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Se obtiene la función 'login' del contexto
   const { login } = useAuth();
 
   const handleChange = (e) => {
@@ -29,7 +28,6 @@ const LoginForm = ({ onLoginSuccess }) => {
   };
 
   const validateForm = () => {
-    // ... (Tu validación está perfecta)
     let formIsValid = true;
     const newErrors = { username: '', password: '' };
     if (!formData.username) {
@@ -44,7 +42,6 @@ const LoginForm = ({ onLoginSuccess }) => {
     return formIsValid;
   };
 
-  // Esta función ya es 'async', lo cual es perfecto
   const handleSubmit = async (e) => { 
     e.preventDefault();
     setServerError(null);
@@ -61,20 +58,13 @@ const LoginForm = ({ onLoginSuccess }) => {
     };
 
     try {
-      // 1. Llama al backend para obtener el token
       const response = await AuthService.login(credentials);
       const token = response.data.token;
-      
-      // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
-      // 2. Llama a la función 'login' del contexto (que es asíncrona)
-      //    y ESPERA (await) a que termine de cargar el perfil.
       await login(token);
-      
-      // 3. Ahora que el contexto SÍ tiene el 'user', redirige.
       onLoginSuccess();
 
     } catch (err) {
-      console.error("Error en el proceso de login:", err); // Mensaje de error mejorado
+      console.error("Error en el proceso de login:", err);
       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
           setServerError("Nombre de usuario o contraseña incorrectos.");
       } else {
@@ -89,7 +79,6 @@ const LoginForm = ({ onLoginSuccess }) => {
     <div className="form-container">
       <h2>Iniciar Sesión</h2>
       <form onSubmit={handleSubmit} noValidate>
-        {/* Tu JSX está perfecto, no se toca */}
         <FormField
           label="Nombre de Usuario"
           type="text"

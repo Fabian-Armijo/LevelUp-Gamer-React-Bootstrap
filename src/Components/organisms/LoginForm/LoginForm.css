@@ -23,7 +23,7 @@
   font-family: var(--font-main);
 }
 .success-message {
-  color: #28a745; /* verde suave */
+  color: #28a745; 
   font-size: 0.85rem;
   margin-top: 4px;
   margin-bottom: 10px;

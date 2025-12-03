@@ -13,17 +13,12 @@ const ReviewForm = ({ onAddReview }) => {
       setError('Por favor, selecciona una calificación y escribe un comentario.');
       return;
     }
-    
-    // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
-    // Simplemente pasamos la calificación y el comentario.
-    // El backend se encargará de añadir el autor desde el token.
+
     onAddReview({
       rating,
       comment,
     });
-    // --- FIN DEL CAMBIO ---
 
-    // Resetea el formulario
     setRating(0);
     setComment('');
     setError('');

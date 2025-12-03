@@ -2,8 +2,6 @@ import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 // Lista de ubicaciones con sus coordenadas
-// Puedes obtener coordenadas fácilmente buscando un lugar en Google Maps
-// y haciendo clic derecho -> "Copiar coordenadas"
 const eventLocations = [
   { position: [-33.4589, -70.6053], name: 'Movistar Gameclub Mallplaza Vespucio', desc: 'Torneos semanales y eventos especiales.' },
   { position: [-36.8271, -73.0651], name: 'Movistar Gameclub Mallplaza Trébol', desc: 'El punto de encuentro gamer en Concepción.' },
