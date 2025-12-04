@@ -254,7 +254,7 @@ const ProfilePage = () => {
                                 <p>Bienvenido, Administrador. Desde aquí puedes acceder a las herramientas de moderación y gestión de tu eCommerce.</p>
                                 <ul className="list-unstyled mt-3">
                                     <li>- Moderar Reseñas (desde detalles de producto)</li>
-                                    <li>- Revisar Estadísticas de Ventas (si está implementado)</li>
+                                    <li>- Revisar Estadísticas de Ventas </li>
                                 </ul>
                                 <Button className="mt-4" onClick={handleGoToAdminDashboard}>
                                     Gestión de Contenido (Ruta /admin)
